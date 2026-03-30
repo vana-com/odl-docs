@@ -1,11 +1,11 @@
 ---
 title: Introduction
 excerpt: >-
-  Context Gateway gives your users portable, user-owned data — without you
+  Context Gateway gives your users portable, user-owned data, without you
   building the infrastructure.
 ---
 
-Context Gateway is a data portability API for platform builders. It lets your users connect their accounts from other services (Spotify, Netflix, GitHub, and more) and bring that data into your app — without your platform ever touching credentials or taking on liability for storing it.
+Context Gateway is a data portability API for platform builders. It lets your users connect their accounts from other services (Spotify, Netflix, GitHub, and more) and bring that data into your app, without your platform ever touching credentials or taking on liability for storing it.
 
 ## Why Context Gateway exists
 
