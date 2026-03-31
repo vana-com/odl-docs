@@ -27,7 +27,15 @@ OPENDATALABS_API_KEY=<<apiKey>>
 
 Each dashboard app has a public app ID, for example `odl_app_...`. Use it in your frontend or include it when your server creates sessions for a specific app.
 
-## Step 3: Create a Connect session on your server
+## Step 3: Install the SDK
+
+If you are building a React frontend, install the SDK and use its React helpers to open Connect cleanly.
+
+```bash
+npm install @opendatalabs/connect-js
+```
+
+## Step 4: Create a Connect session on your server
 
 Call the Open Data Labs API from your backend and create a hosted Connect session for a source.
 
@@ -57,7 +65,13 @@ export async function createConnectSession() {
 
 The `origin` must match one of the approved domains for the selected app exactly.
 
-## Step 4: Open the hosted Connect URL in your frontend
+## Step 5: Open the hosted Connect URL in your frontend
+
+You can handle this yourself, or use the SDK:
+
+```tsx
+import { OpenDataLabsProvider } from "@opendatalabs/connect-js/react";
+```
 
 Return the session payload from your backend to your frontend and open `connectUrl` in a modal or iframe.
 
@@ -73,7 +87,7 @@ iframe.style.border = "0";
 document.getElementById("connect-modal-body")?.appendChild(iframe);
 ```
 
-## Step 5: Listen for success events
+## Step 6: Listen for success events
 
 The hosted Connect flow posts lifecycle events back to the parent window.
 
@@ -97,7 +111,7 @@ window.addEventListener("message", (event) => {
 });
 ```
 
-## Step 6: Retrieve sources and scopes dynamically
+## Step 7: Retrieve sources and scopes dynamically
 
 You can fetch the current source catalog from the API instead of hard-coding it.
 

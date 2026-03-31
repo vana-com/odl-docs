@@ -22,6 +22,14 @@ Use this split:
 
 In the dashboard, create an app for each integration surface where you embed Connect. Domains are approved per app, not globally for the whole account.
 
+## SDK option
+
+For React apps, you can use `@opendatalabs/connect-js` and keep your session-creation logic on your backend:
+
+```tsx
+import { OpenDataLabsProvider, useConnect } from "@opendatalabs/connect-js/react";
+```
+
 ## Create a Connect session
 
 ```ts
