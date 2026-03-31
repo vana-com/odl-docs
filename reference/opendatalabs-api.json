@@ -1,0 +1,1463 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Open Data Labs API",
+    "version": "v1",
+    "description": "Public API for Open Data Labs embedded Connect sessions, sources, and account configuration."
+  },
+  "servers": [
+    {
+      "url": "https://api.opendatalabs.com/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "System"
+    },
+    {
+      "name": "Sources"
+    },
+    {
+      "name": "Connect Sessions"
+    },
+    {
+      "name": "Account"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API key or Privy access token"
+      }
+    },
+    "schemas": {
+      "ApiError": {
+        "type": "object",
+        "required": [
+          "error",
+          "message"
+        ],
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok"
+            ]
+          }
+        }
+      },
+      "Source": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description",
+          "status",
+          "scopes"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "instagram",
+              "icloud_notes",
+              "spotify",
+              "github"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "available",
+              "coming_soon",
+              "beta"
+            ]
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "Scope": {
+        "type": "object",
+        "required": [
+          "id",
+          "description",
+          "category"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          }
+        }
+      },
+      "AllowedOrigin": {
+        "type": "object",
+        "required": [
+          "id",
+          "origin",
+          "label",
+          "type",
+          "lastUsedAt",
+          "createdAt",
+          "updatedAt",
+          "locked"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string",
+            "format": "uri"
+          },
+          "label": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "system",
+              "user"
+            ]
+          },
+          "lastUsedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "locked": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CredentialsResponse": {
+        "type": "object",
+        "required": [
+          "apiKey",
+          "apiKeyPrefix",
+          "apiKeyRotatedAt",
+          "plan",
+          "requestCount",
+          "requestLimit"
+        ],
+        "properties": {
+          "apiKey": {
+            "type": "string"
+          },
+          "apiKeyPrefix": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "apiKeyRotatedAt": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "plan": {
+            "type": "string"
+          },
+          "requestCount": {
+            "type": "integer"
+          },
+          "requestLimit": {
+            "type": "integer"
+          }
+        }
+      },
+      "App": {
+        "type": "object",
+        "required": [
+          "id",
+          "publicId",
+          "name",
+          "status",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "publicId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ConnectSessionRequest": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": [
+              "instagram",
+              "icloud_notes",
+              "spotify",
+              "github"
+            ]
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "redirectUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "origin": {
+            "type": "string",
+            "format": "uri"
+          },
+          "appId": {
+            "type": "string"
+          }
+        }
+      },
+      "ConnectSessionResponse": {
+        "type": "object",
+        "required": [
+          "connectionId",
+          "connectToken",
+          "connectUrl"
+        ],
+        "properties": {
+          "connectionId": {
+            "type": "string"
+          },
+          "connectToken": {
+            "type": "string"
+          },
+          "connectUrl": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "System"
+        ],
+        "summary": "Health check",
+        "operationId": "getHealth",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Service is healthy.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sources": {
+      "get": {
+        "tags": [
+          "Sources"
+        ],
+        "summary": "List available sources",
+        "operationId": "listSources",
+        "responses": {
+          "200": {
+            "description": "All supported sources.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "name",
+                      "description",
+                      "status",
+                      "scopes"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "enum": [
+                          "instagram",
+                          "icloud_notes",
+                          "spotify",
+                          "github"
+                        ]
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "available",
+                          "coming_soon",
+                          "beta"
+                        ]
+                      },
+                      "scopes": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "sources": {
+                    "value": [
+                      {
+                        "id": "instagram",
+                        "name": "Instagram",
+                        "description": "Connect your Instagram account to access profile data, posts, and engagement metrics",
+                        "status": "available",
+                        "scopes": [
+                          "read:user_profile",
+                          "read:posts",
+                          "read:engagement"
+                        ]
+                      },
+                      {
+                        "id": "icloud_notes",
+                        "name": "iCloud Notes",
+                        "description": "Connect your iCloud account to access your Apple Notes and folders",
+                        "status": "available",
+                        "scopes": [
+                          "read:notes",
+                          "read:folders"
+                        ]
+                      },
+                      {
+                        "id": "spotify",
+                        "name": "Spotify",
+                        "description": "Connect your Spotify account to access listening history and playlists",
+                        "status": "coming_soon",
+                        "scopes": [
+                          "read:user_profile",
+                          "read:playlists",
+                          "read:listening_history"
+                        ]
+                      },
+                      {
+                        "id": "github",
+                        "name": "GitHub",
+                        "description": "Connect your GitHub account to access repositories and contribution data",
+                        "status": "coming_soon",
+                        "scopes": [
+                          "read:user_profile",
+                          "read:repos",
+                          "read:contributions"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "unauthorized": {
+                    "value": {
+                      "error": "unauthorized",
+                      "message": "Invalid or missing token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sources/{source}/scopes": {
+      "get": {
+        "tags": [
+          "Sources"
+        ],
+        "summary": "List scopes for a source",
+        "operationId": "listSourceScopes",
+        "parameters": [
+          {
+            "name": "source",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "instagram",
+                "icloud_notes",
+                "spotify",
+                "github"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Scopes for the requested source.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "description",
+                      "category"
+                    ],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "category": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "unauthorized": {
+                    "value": {
+                      "error": "unauthorized",
+                      "message": "Invalid or missing token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Source not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/connect/sessions": {
+      "post": {
+        "tags": [
+          "Connect Sessions"
+        ],
+        "summary": "Create a connect session",
+        "description": "Creates a short-lived hosted Connect session for an approved origin.",
+        "operationId": "createConnectSession",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "source"
+                ],
+                "properties": {
+                  "source": {
+                    "type": "string",
+                    "enum": [
+                      "instagram",
+                      "icloud_notes",
+                      "spotify",
+                      "github"
+                    ]
+                  },
+                  "scopes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "redirectUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "origin": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "appId": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Connect session created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "connectionId",
+                    "connectToken",
+                    "connectUrl"
+                  ],
+                  "properties": {
+                    "connectionId": {
+                      "type": "string"
+                    },
+                    "connectToken": {
+                      "type": "string"
+                    },
+                    "connectUrl": {
+                      "type": "string",
+                      "format": "uri"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "unauthorized": {
+                    "value": {
+                      "error": "unauthorized",
+                      "message": "Invalid or missing token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The origin is not approved for the authenticated account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/credentials": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Get account credentials",
+        "operationId": "getAccountCredentials",
+        "responses": {
+          "200": {
+            "description": "Current server API key and plan metadata.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "apiKey",
+                    "apiKeyPrefix",
+                    "apiKeyRotatedAt",
+                    "plan",
+                    "requestCount",
+                    "requestLimit"
+                  ],
+                  "properties": {
+                    "apiKey": {
+                      "type": "string"
+                    },
+                    "apiKeyPrefix": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "apiKeyRotatedAt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "format": "date-time"
+                    },
+                    "plan": {
+                      "type": "string"
+                    },
+                    "requestCount": {
+                      "type": "integer"
+                    },
+                    "requestLimit": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "unauthorized": {
+                    "value": {
+                      "error": "unauthorized",
+                      "message": "Invalid or missing token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apps": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "List apps",
+        "operationId": "listApps",
+        "responses": {
+          "200": {
+            "description": "Apps for the authenticated account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "apps"
+                  ],
+                  "properties": {
+                    "apps": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "publicId",
+                          "name",
+                          "status",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "publicId": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "status": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "unauthorized": {
+                    "value": {
+                      "error": "unauthorized",
+                      "message": "Invalid or missing token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Create app",
+        "operationId": "createApp",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "App created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "app"
+                  ],
+                  "properties": {
+                    "app": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "publicId",
+                        "name",
+                        "status",
+                        "createdAt",
+                        "updatedAt"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "publicId": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "updatedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid app definition.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "unauthorized": {
+                    "value": {
+                      "error": "unauthorized",
+                      "message": "Invalid or missing token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/embed-origins": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "List approved domains",
+        "operationId": "listApprovedDomains",
+        "parameters": [
+          {
+            "name": "appId",
+            "in": "query",
+            "required": false,
+            "description": "Public app ID. When omitted, the default app for the authenticated account is used.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Approved domains for the selected app.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "origins"
+                  ],
+                  "properties": {
+                    "origins": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "id",
+                          "origin",
+                          "label",
+                          "type",
+                          "lastUsedAt",
+                          "createdAt",
+                          "updatedAt",
+                          "locked"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "origin": {
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "label": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "system",
+                              "user"
+                            ]
+                          },
+                          "lastUsedAt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "createdAt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "format": "date-time"
+                          },
+                          "locked": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "unauthorized": {
+                    "value": {
+                      "error": "unauthorized",
+                      "message": "Invalid or missing token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Add an approved domain",
+        "operationId": "createApprovedDomain",
+        "parameters": [
+          {
+            "name": "appId",
+            "in": "query",
+            "required": false,
+            "description": "Public app ID. When omitted, the default app for the authenticated account is used.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "origin"
+                ],
+                "properties": {
+                  "origin": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Domain approved.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "origin"
+                  ],
+                  "properties": {
+                    "origin": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "origin",
+                        "label",
+                        "type",
+                        "lastUsedAt",
+                        "createdAt",
+                        "updatedAt",
+                        "locked"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "origin": {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "type": "string",
+                          "enum": [
+                            "system",
+                            "user"
+                          ]
+                        },
+                        "lastUsedAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "format": "date-time"
+                        },
+                        "createdAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "format": "date-time"
+                        },
+                        "updatedAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "format": "date-time"
+                        },
+                        "locked": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid origin.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "unauthorized": {
+                    "value": {
+                      "error": "unauthorized",
+                      "message": "Invalid or missing token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account/embed-origins/{id}": {
+      "delete": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Remove an approved domain",
+        "operationId": "deleteApprovedDomain",
+        "parameters": [
+          {
+            "name": "appId",
+            "in": "query",
+            "required": false,
+            "description": "Public app ID. When omitted, the default app for the authenticated account is used.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Domain removed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid bearer token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "unauthorized": {
+                    "value": {
+                      "error": "unauthorized",
+                      "message": "Invalid or missing token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Origin not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "error",
+                    "message"
+                  ],
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

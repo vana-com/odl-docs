@@ -1,0 +1,6 @@
+- getaccountcredentials
+- listapps
+- createapp
+- listapproveddomains
+- createapproveddomain
+- deleteapproveddomain
