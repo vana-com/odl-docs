@@ -12,7 +12,7 @@ This guide gets you to a working embedded Connect flow using the current product
 Before you start, make sure you have:
 
 - an API key from [dashboard.opendatalabs.com](https://dashboard.opendatalabs.com)
-- an approved domain in the dashboard for the app where you will launch Connect
+- an app in the dashboard with at least one approved domain where you will launch Connect
 - a server route in your app where you can safely call the Open Data Labs API
 
 ## Step 1: Store your API key on the server
@@ -23,7 +23,11 @@ Keep your API key in a server-only environment variable.
 OPENDATALABS_API_KEY=<<apiKey>>
 ```
 
-## Step 2: Create a Connect session on your server
+## Step 2: Get your public app ID
+
+Each dashboard app has a public app ID, for example `odl_app_...`. Use it in your frontend or include it when your server creates sessions for a specific app.
+
+## Step 3: Create a Connect session on your server
 
 Call the Open Data Labs API from your backend and create a hosted Connect session for a source.
 
@@ -36,6 +40,7 @@ export async function createConnectSession() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
+      appId: "odl_app_123",
       source: "instagram",
       scopes: ["read:user_profile", "read:posts", "read:engagement"],
       origin: "https://yourapp.com",
@@ -50,9 +55,9 @@ export async function createConnectSession() {
 }
 ```
 
-The `origin` must match one of your approved domains exactly.
+The `origin` must match one of the approved domains for the selected app exactly.
 
-## Step 3: Open the hosted Connect URL in your frontend
+## Step 4: Open the hosted Connect URL in your frontend
 
 Return the session payload from your backend to your frontend and open `connectUrl` in a modal or iframe.
 
@@ -68,7 +73,7 @@ iframe.style.border = "0";
 document.getElementById("connect-modal-body")?.appendChild(iframe);
 ```
 
-## Step 4: Listen for success events
+## Step 5: Listen for success events
 
 The hosted Connect flow posts lifecycle events back to the parent window.
 
@@ -92,7 +97,7 @@ window.addEventListener("message", (event) => {
 });
 ```
 
-## Step 5: Retrieve sources and scopes dynamically
+## Step 6: Retrieve sources and scopes dynamically
 
 You can fetch the current source catalog from the API instead of hard-coding it.
 

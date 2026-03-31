@@ -13,11 +13,14 @@ Use this split:
 
 - **server**
   - stores `OPENDATALABS_API_KEY`
-  - creates Connect sessions
+  - creates Connect sessions for a specific app
 - **frontend**
+  - uses the public app ID for the integration surface
   - requests a session from your backend
   - opens the returned `connectUrl`
   - handles `postMessage` events from the hosted flow
+
+In the dashboard, create an app for each integration surface where you embed Connect. Domains are approved per app, not globally for the whole account.
 
 ## Create a Connect session
 
@@ -30,6 +33,7 @@ export async function createConnectSession() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
+      appId: "odl_app_123",
       source: "instagram",
       scopes: ["read:user_profile", "read:posts", "read:engagement"],
       origin: "https://yourapp.com",
@@ -51,9 +55,9 @@ export async function createConnectSession() {
 | --- | --- | --- |
 | `source` | Yes | Source identifier like `instagram` or `icloud_notes` |
 | `scopes` | No | Scopes to request for the source |
+| `appId` | No | Public app ID like `odl_app_...`; if omitted, Open Data Labs uses the default app for the account |
 | `origin` | Yes | Exact embedding origin, for example `https://yourapp.com` |
 | `redirectUrl` | No | Optional redirect URL for legacy flows |
-| `appId` | No | Reserved for future public app/client integrations |
 
 ## Open the flow in a modal
 
@@ -96,9 +100,9 @@ window.addEventListener("message", (event) => {
 
 ## Domain approval errors
 
-If the origin is not approved, session creation will fail with `origin_not_allowed`.
+If the origin is not approved for the selected app, session creation will fail with `origin_not_allowed`.
 
-Fix this by adding the exact embedding origin in the Open Data Labs dashboard.
+Fix this by adding the exact embedding origin to the matching app in the Open Data Labs dashboard.
 
 Examples:
 
