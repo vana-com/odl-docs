@@ -1,6 +1,8 @@
 ---
 title: Handling Consent
 excerpt: Check connection status, handle revocation, and request additional scopes
+deprecated: true
+hidden: true
 ---
 
 # Handling Consent
