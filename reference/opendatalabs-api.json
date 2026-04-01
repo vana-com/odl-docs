@@ -12,10 +12,6 @@
   ],
   "tags": [
     {
-      "name": "System",
-      "description": "Operational endpoints for service status checks."
-    },
-    {
       "name": "Sources",
       "description": "Discovery endpoints. Start here to confirm your API key works and to inspect available sources and scopes."
     },
@@ -50,20 +46,6 @@
           },
           "message": {
             "type": "string"
-          }
-        }
-      },
-      "HealthResponse": {
-        "type": "object",
-        "required": [
-          "status"
-        ],
-        "properties": {
-          "status": {
-            "type": "string",
-            "enum": [
-              "ok"
-            ]
           }
         }
       },
@@ -186,44 +168,6 @@
           }
         }
       },
-      "CredentialsResponse": {
-        "type": "object",
-        "required": [
-          "apiKey",
-          "apiKeyPrefix",
-          "apiKeyRotatedAt",
-          "plan",
-          "requestCount",
-          "requestLimit"
-        ],
-        "properties": {
-          "apiKey": {
-            "type": "string"
-          },
-          "apiKeyPrefix": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "apiKeyRotatedAt": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "format": "date-time"
-          },
-          "plan": {
-            "type": "string"
-          },
-          "requestCount": {
-            "type": "integer"
-          },
-          "requestLimit": {
-            "type": "integer"
-          }
-        }
-      },
       "App": {
         "type": "object",
         "required": [
@@ -320,39 +264,6 @@
     }
   ],
   "paths": {
-    "/health": {
-      "get": {
-        "tags": [
-          "System"
-        ],
-        "summary": "Health check",
-        "operationId": "getHealth",
-        "security": [],
-        "responses": {
-          "200": {
-            "description": "Service is healthy.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "status"
-                  ],
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "enum": [
-                        "ok"
-                      ]
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/sources": {
       "get": {
         "tags": [
@@ -789,93 +700,6 @@
                       "error": "origin_not_allowed",
                       "message": "This origin is not approved for embedded connections. Add it in Dashboard -> Embed Origins.",
                       "requestedOrigin": "https://app.example.com"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/account/credentials": {
-      "get": {
-        "tags": [
-          "Account"
-        ],
-        "summary": "Get account credentials",
-        "description": "Returns the current developer account API key and quota counters. Intended for signed-in dashboard or back-office flows authenticated with a Privy access token.",
-        "operationId": "getAccountCredentials",
-        "responses": {
-          "200": {
-            "description": "Current server API key and plan metadata.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "apiKey",
-                    "apiKeyPrefix",
-                    "apiKeyRotatedAt",
-                    "plan",
-                    "requestCount",
-                    "requestLimit"
-                  ],
-                  "properties": {
-                    "apiKey": {
-                      "type": "string"
-                    },
-                    "apiKeyPrefix": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "apiKeyRotatedAt": {
-                      "type": [
-                        "string",
-                        "null"
-                      ],
-                      "format": "date-time"
-                    },
-                    "plan": {
-                      "type": "string"
-                    },
-                    "requestCount": {
-                      "type": "integer"
-                    },
-                    "requestLimit": {
-                      "type": "integer"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing or invalid bearer token.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": [
-                    "error",
-                    "message"
-                  ],
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "examples": {
-                  "unauthorized": {
-                    "value": {
-                      "error": "unauthorized",
-                      "message": "Invalid or missing token"
                     }
                   }
                 }
