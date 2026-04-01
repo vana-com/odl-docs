@@ -9,7 +9,7 @@ icon: icon-key1
 ---
 Use your Open Data Labs API key for server-to-server API calls. Do not expose it in client-side code.
 
-For frontend integrations, use your public `appId` in the client and create Connect sessions from your server. 
+For frontend integrations, use your public `appId` in the client and create Connect sessions from your server. {user.apiKey}
 
 ## Server-side bearer token
 
