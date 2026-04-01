@@ -1,6 +1,9 @@
 ---
 title: Getting Started
 excerpt: Make your first authenticated Open Data Labs API call from server-side code.
+api:
+  file: opendatalabs-api.json
+  operationId: listSources
 api_config: getting-started
 hidden: false
 icon: icon-book1

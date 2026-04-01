@@ -3,6 +3,9 @@ title: Authentication
 excerpt: >-
   Use your Open Data Labs API key on the server and keep browser clients on app
   IDs plus hosted sessions.
+api:
+  file: opendatalabs-api.json
+  operationId: listSources
 api_config: authentication
 hidden: false
 icon: icon-key1
