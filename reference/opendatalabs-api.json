@@ -3,7 +3,7 @@
   "info": {
     "title": "Open Data Labs API",
     "version": "v1",
-    "description": "Public API for Open Data Labs embedded Connect sessions, sources, and account configuration."
+    "description": "Server-side API for discovering sources, configuring embedded apps, and creating hosted Connect sessions."
   },
   "servers": [
     {
@@ -12,16 +12,20 @@
   ],
   "tags": [
     {
-      "name": "System"
+      "name": "System",
+      "description": "Operational endpoints for service status checks."
     },
     {
-      "name": "Sources"
+      "name": "Sources",
+      "description": "Discovery endpoints. Start here to confirm your API key works and to inspect available sources and scopes."
     },
     {
-      "name": "Connect Sessions"
+      "name": "Connect Sessions",
+      "description": "Runtime server endpoints for creating hosted Connect flows after you have configured an app and approved its frontend origin."
     },
     {
-      "name": "Account"
+      "name": "Account",
+      "description": "Developer setup endpoints for retrieving your account credentials, managing app IDs, and approving embed origins."
     }
   ],
   "components": {
@@ -29,7 +33,8 @@
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer",
-        "bearerFormat": "API key or Privy access token"
+        "bearerFormat": "API key or Privy access token",
+        "description": "Pass an Open Data Labs API key for server-to-server runtime requests. Developer setup endpoints also accept a Privy access token for signed-in dashboard flows."
       }
     },
     "schemas": {
@@ -354,6 +359,7 @@
           "Sources"
         ],
         "summary": "List available sources",
+        "description": "Recommended first authenticated request. Use it to verify your API key and see which sources can be connected before creating a hosted Connect session.",
         "operationId": "listSources",
         "responses": {
           "200": {
@@ -495,6 +501,7 @@
           "Sources"
         ],
         "summary": "List scopes for a source",
+        "description": "Returns the scopes your app can request for a specific source when creating a hosted Connect session.",
         "operationId": "listSourceScopes",
         "parameters": [
           {
@@ -603,7 +610,7 @@
           "Connect Sessions"
         ],
         "summary": "Create a connect session",
-        "description": "Creates a short-lived hosted Connect session for an approved origin.",
+        "description": "Creates a short-lived hosted Connect session for an approved frontend origin. Call this from your server after you have created an app and approved the iframe host origin for that app.",
         "operationId": "createConnectSession",
         "requestBody": {
           "required": true,
@@ -642,6 +649,20 @@
                     "type": "string"
                   }
                 }
+              },
+              "examples": {
+                "createInstagramSession": {
+                  "value": {
+                    "source": "instagram",
+                    "scopes": [
+                      "read:profile",
+                      "read:posts"
+                    ],
+                    "appId": "odl_app_1234567890abcdef123456",
+                    "origin": "https://app.example.com",
+                    "redirectUrl": "https://app.example.com/connect/complete"
+                  }
+                }
               }
             }
           }
@@ -670,6 +691,15 @@
                       "format": "uri"
                     }
                   }
+                },
+                "examples": {
+                  "session": {
+                    "value": {
+                      "connectionId": "conn_1234567890abcdef",
+                      "connectToken": "eyJhbGciOiJIUzI1NiJ9.example",
+                      "connectUrl": "https://dashboard.opendatalabs.com/connect/instagram?token=eyJhbGciOiJIUzI1NiJ9.example"
+                    }
+                  }
                 }
               }
             }
@@ -690,6 +720,14 @@
                     },
                     "message": {
                       "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidRedirectUrl": {
+                    "value": {
+                      "error": "invalid_redirect_url",
+                      "message": "redirectUrl must use the same origin as the approved iframe host."
                     }
                   }
                 }
@@ -744,6 +782,15 @@
                       "type": "string"
                     }
                   }
+                },
+                "examples": {
+                  "originNotAllowed": {
+                    "value": {
+                      "error": "origin_not_allowed",
+                      "message": "This origin is not approved for embedded connections. Add it in Dashboard -> Embed Origins.",
+                      "requestedOrigin": "https://app.example.com"
+                    }
+                  }
                 }
               }
             }
@@ -757,6 +804,7 @@
           "Account"
         ],
         "summary": "Get account credentials",
+        "description": "Returns the current developer account API key and quota counters. Intended for signed-in dashboard or back-office flows authenticated with a Privy access token.",
         "operationId": "getAccountCredentials",
         "responses": {
           "200": {
@@ -843,6 +891,7 @@
           "Account"
         ],
         "summary": "List apps",
+        "description": "Lists the embed apps owned by the authenticated account. Each app has a public app ID that your frontend SDK can use.",
         "operationId": "listApps",
         "responses": {
           "200": {
@@ -934,6 +983,7 @@
           "Account"
         ],
         "summary": "Create app",
+        "description": "Creates a new embed app and returns its public app ID. Approve one or more frontend origins on the app before creating hosted Connect sessions for it.",
         "operationId": "createApp",
         "requestBody": {
           "required": true,
@@ -1064,6 +1114,7 @@
           "Account"
         ],
         "summary": "List approved domains",
+        "description": "Lists the approved frontend origins for an app. A connect session can only be created for origins on this list.",
         "operationId": "listApprovedDomains",
         "parameters": [
           {
@@ -1191,6 +1242,7 @@
           "Account"
         ],
         "summary": "Add an approved domain",
+        "description": "Approves a frontend origin for an app so that your server can later create hosted Connect sessions for that origin.",
         "operationId": "createApprovedDomain",
         "parameters": [
           {
@@ -1364,6 +1416,7 @@
           "Account"
         ],
         "summary": "Remove an approved domain",
+        "description": "Removes an approved frontend origin from an app. Future connect-session requests from that origin will be rejected.",
         "operationId": "deleteApprovedDomain",
         "parameters": [
           {
