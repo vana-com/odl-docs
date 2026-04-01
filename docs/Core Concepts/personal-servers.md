@@ -1,6 +1,8 @@
 ---
 title: Personal Servers
 excerpt: Learn about per-user encrypted data stores that power Context Gateway
+deprecated: true
+hidden: true
 ---
 
 # Personal Servers

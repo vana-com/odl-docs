@@ -1,71 +1,67 @@
 ---
 title: How It Works
-excerpt: Understand the four-step flow and architecture of Context Gateway
+excerpt: Understand the current hosted Connect session model.
 ---
 
-# How Context Gateway Works
+# How Open Data Labs Works
 
-Context Gateway enables your application to access user data from any source without storing credentials, building integrations, or managing data compliance. Here's how the system works.
+Open Data Labs uses a hosted Connect model. Your backend creates short-lived Connect sessions, and your frontend opens the returned hosted URL in an embedded flow.
 
-## The Four-Step Flow
+## The current flow
 
-### Step 1: App Initiates Connect
+### Step 1: Your server creates a Connect session
 
-Your application redirects the user to Context Gateway with a connect request containing:
-- Your API key
-- The data source (e.g., Spotify, GitHub, Netflix)
-- The specific data scopes needed (e.g., read:playlists, read:user_profile)
-- A callback URL where the user should return after authentication
+Your backend calls the API with:
 
-### Step 2: User Authenticates with Source
+- your server API key
+- the source to connect
+- the scopes you want to request
+- the exact origin where the flow will run
 
-The user is directed to the source's authentication flow (e.g., Spotify's login). Context Gateway never sees the user's credentials—the source handles authentication directly.
+### Step 2: Open Data Labs validates the request
 
-### Step 3: Personal Server Provisioned
+Before returning a Connect URL, Open Data Labs checks:
 
-Upon successful authentication, Context Gateway automatically provisions a Personal Server: an encrypted, per-user data store. The user's identity is tied to the source account, and Context Gateway syncs data from the source into this Personal Server.
+- that the source is available
+- that the request is authenticated
+- that the requested origin is approved for your account
 
-### Step 4: App Queries Data via API
+### Step 3: The hosted Connect flow runs
 
-Your application can now query the user's data via the Context Gateway API using a connection ID. All queries hit the Personal Server, not the source directly. The user can revoke access at any time, immediately stopping all queries.
+The user completes the connection flow in an Open Data Labs-hosted interface. Your application does not need to build the source-specific auth and automation flow itself.
 
-## System Architecture
+### Step 4: Your app receives lifecycle events
 
-```
-┌────────────┐
-│  Your App  │
-└──────┬─────┘
-       │ 1. Initiates connect
-       │ 4. Queries data via API
-       ▼
-┌──────────────────────────────┐
-│  Context Gateway API         │
-│  (Authentication, Routing)   │
-└──────┬───────────────┬───────┘
-       │ 2. Auth flow  │ 3. Provisions & syncs
-       ▼               ▼
-   ┌────────┐    ┌──────────────┐
-   │ Source │    │ Personal     │
-   │        │    │ Server       │
-   │        │    │ (Encrypted)  │
-   └────────┘    └──────────────┘
-```
+The hosted flow posts events back to the embedding page, including:
 
-## Trust Model
+- `ready`
+- `success`
+- `exit`
 
-Context Gateway's security model is built on clear separation of responsibilities. Here's who can access what:
+## Trust model
 
-| Component | Can Access User Credentials? | Can Access Raw User Data? | Responsibility |
-|-----------|------------------------------|--------------------------|-----------------|
-| **Your App** | No | No (via queries only) | Request data, handle results, implement application logic |
-| **Context Gateway** | No | No | Route requests, manage Personal Servers, enforce consent |
-| **Personal Server** | No (never stored) | Yes (encrypted storage) | Store synced data, respond to queries, enforce scopes |
-| **User** | Yes (with source) | Yes (owns data) | Authenticate, grant/revoke consent, control data |
+| Component | Responsibility |
+| --- | --- |
+| **Your server** | Holds the API key and creates Connect sessions |
+| **Your frontend** | Opens the hosted Connect flow |
+| **Open Data Labs** | Hosts the Connect UI and executes the source-specific flow |
+| **The user** | Authenticates and grants access |
 
-### Key Trust Principles
+## Approved domains
 
-- **User is sole data owner**: Only the user can grant or revoke access to their data
-- **Credentials never cross boundaries**: User credentials are only known to the source
-- **Personal Server is per-user**: Even Context Gateway cannot access another user's Personal Server
-- **Scopes limit access**: Your app can only query data within the scopes the user granted
-- **Revocation is immediate**: When a user revokes access, all queries fail immediately
+Open Data Labs enforces approved domains as part of Connect session creation.
+
+That means:
+
+- the browser origin must match an approved domain exactly
+- local development domains can be added separately
+- unsupported or mismatched origins are rejected before the session is created
+
+## Supported sources
+
+The public source catalog currently includes:
+
+- Instagram
+- iCloud Notes
+
+Roadmap sources may appear in product demos or catalog responses as `coming_soon`, but only `available` sources should be used in production integrations.

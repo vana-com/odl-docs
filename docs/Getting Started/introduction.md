@@ -1,36 +1,67 @@
 ---
 title: Introduction
 excerpt: >-
-  Context Gateway gives your users portable, user-owned data, without you
-  building the infrastructure.
+  Open Data Labs lets your users connect external accounts in your app without
+  you storing credentials or building source-specific integrations.
 ---
-Context Gateway is a data portability API for platform builders. It lets your users connect their accounts from other services (Spotify, Netflix, GitHub, and more) and bring that data into your app, without your platform ever touching credentials or taking on liability for storing it.
+Open Data Labs gives product teams an embedded Connect flow for consented data access. Your app initiates a Connect session on the server, Open Data Labs hosts the user-facing connection flow, and your users choose what to share.
 
-## Why Context Gateway exists
+The result is a simpler integration model:
 
-Building data portability in-house means managing OAuth integrations, credential storage, sync reliability, and platform-specific edge cases. It's expensive to build and expensive to maintain.
+- Your server holds a secret API key
+- Your frontend launches a hosted Connect session
+- Open Data Labs handles the source-specific automation
+- Your users stay in control of which account and scopes they authorize
 
-Platforms that hold user data on their users' behalf take on trust and legal liability. Users increasingly expect to own and control their own data.
+## Why teams use Open Data Labs
 
-Without portability, every app starts cold for every user. There's no way to make use of data the user already has elsewhere.
+Building this in-house means taking on:
 
-Context Gateway solves all three problems with a single integration.
+- source-specific auth and automation logic
+- brittle browser edge cases
+- consent UI and lifecycle handling
+- credential-handling risk
 
-## Who it's for
+Open Data Labs gives you one API and one embedded flow instead.
 
-Context Gateway is built for **application and platform builders** who want to offer their users seamless data portability as a feature. You don't want to build or maintain the infrastructure, handle user credential management, or take on the legal and trust surface of holding external user data.
+## What the current product does
 
-Your users are end users of your app. They own their own data. Your platform is never in the middle.
+Today, Open Data Labs supports:
 
-## Key principles
+- hosted Connect sessions
+- approved-domain enforcement
+- server API keys
+- account-level configuration in the dashboard
+- available sources:
+  - Instagram
+  - iCloud Notes
 
-| Principle                              | Description                                                                                                                                                     |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **No install for end users**           | The end user never downloads or installs anything. The connect flow is embedded in your app.                                                                    |
-| **Platform never touches credentials** | The user authenticates directly with the source. Your platform and Context Gateway never see or store login credentials.                                        |
-| **User owns the data**                 | Each user's Personal Server is provisioned in their name, controlled by their passkey. Neither Context Gateway nor your platform can access it without consent. |
-| **Access is scoped and revocable**     | Each platform only sees what it connected. Users can revoke access at any time.                                                                                 |
+Additional sources like Spotify and GitHub are visible in the roadmap, but they are not yet generally available in the production API.
 
-## What's coming soon
+## Integration model
 
-Context Gateway is designed for periodic sync, not real-time streaming. Push/event-based emission and consumer-facing data management UIs are on the roadmap but not part of the current API surface.
+The current integration has four parts:
+
+1. Your team gets an API key from the [dashboard](https://dashboard.opendatalabs.com).
+2. You approve the domains where Connect can be launched.
+3. Your server creates a Connect session through the API.
+4. Your frontend opens the returned hosted Connect URL in a modal or iframe.
+
+This keeps your backend in control of the integration while avoiding long-lived secrets in the browser.
+
+## Security model
+
+| Principle | What it means |
+| --- | --- |
+| **Your server holds the secret** | Use your API key only from trusted backend code. |
+| **Your frontend launches short-lived sessions** | The browser should open hosted Connect sessions, not call the API with a long-lived secret. |
+| **Approved domains are enforced** | Connect sessions only work from domains you have explicitly approved. |
+| **Credentials are not stored by your app** | The user authenticates during the hosted flow; your app should not capture or persist source credentials. |
+
+## What comes next
+
+The current public API is focused on embedded Connect and account configuration. Durable connection-management APIs and broader SDK surfaces are planned, but the best current integration path is:
+
+- server-side API key
+- approved domains
+- hosted Connect session creation

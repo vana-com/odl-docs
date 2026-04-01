@@ -157,13 +157,13 @@ const newConnectUrl = client.createConnectUrl({
   source: 'spotify',
   scopes: ['read:user_profile', 'read:playlists', 'read:playback_history'], // New scope
   existingConnectionId: 'conn_abc123def456', // Re-authenticate for new scopes
-  redirectUrl: 'https://yourapp.com/auth/callback',
+  redirectUrl: 'https://yourapp.com/connect/return',
 });
 
 res.redirect(newConnectUrl);
 ```
 
-The user will be asked to authorize the new scopes. On callback, you'll receive the same or updated `connectionId` with the expanded scopes.
+The user will be asked to authorize the new scopes. After the flow returns to your app, you'll receive the same or updated `connectionId` with the expanded scopes.
 
 ## Best Practices
 
