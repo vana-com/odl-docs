@@ -8,8 +8,6 @@ hidden: true
 
 The production Open Data Labs API currently focuses on:
 
-- account credentials
-- approved domains
 - source discovery
 - hosted Connect session creation
 
@@ -24,16 +22,12 @@ https://api.opendatalabs.com/api/v1
 All authenticated requests use a Bearer token:
 
 ```text
-Authorization: Bearer <<keys:id>>
+Authorization: Bearer YOUR_OPENDATALABS_API_KEY
 ```
 
 Use your API key from [dashboard.opendatalabs.com](https://dashboard.opendatalabs.com) from trusted server-side code only.
 
 ## Main endpoints
-
-### `GET /health`
-
-Simple health check.
 
 ### `GET /sources`
 
@@ -51,7 +45,7 @@ Example:
 
 ```bash
 curl -X POST https://api.opendatalabs.com/api/v1/connect/sessions \
-  -H "Authorization: Bearer <<keys:id>>" \
+  -H "Authorization: Bearer YOUR_OPENDATALABS_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "source": "instagram",
@@ -60,28 +54,6 @@ curl -X POST https://api.opendatalabs.com/api/v1/connect/sessions \
   }'
 ```
 
-### `GET /account/credentials`
+## Support
 
-Returns the current API key plus plan and usage metadata for the authenticated account.
-
-### `GET /account/embed-origins`
-
-Lists the approved domains configured for your account.
-
-### `POST /account/embed-origins`
-
-Adds a new approved domain.
-
-### `DELETE /account/embed-origins/{id}`
-
-Removes an approved domain.
-
-## Current product notes
-
-- `POST /connect` still exists as a legacy alias, but `POST /connect/sessions` is the clearer public shape.
-- `/query` is not part of the stable public API yet.
-- durable connection-management endpoints are not yet the primary public model.
-
-## Reference source of truth
-
-The generated OpenAPI definition should be treated as the source of truth for request and response shapes. This page is intended as orientation, not as a hand-maintained endpoint-by-endpoint contract.
+If anything in this overview conflicts with the live API Reference, use the generated endpoint reference as the source of truth.
