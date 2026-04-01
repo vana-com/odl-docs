@@ -118,7 +118,8 @@
               "icloud_notes",
               "spotify",
               "github"
-            ]
+            ],
+            "example": "instagram"
           },
           "scopes": {
             "type": "array",
@@ -329,7 +330,8 @@
                 "icloud_notes",
                 "spotify",
                 "github"
-              ]
+              ],
+              "example": "instagram"
             }
           }
         ],
@@ -443,7 +445,8 @@
                       "icloud_notes",
                       "spotify",
                       "github"
-                    ]
+                    ],
+                    "example": "instagram"
                   },
                   "scopes": {
                     "type": "array",
