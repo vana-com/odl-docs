@@ -6,10 +6,12 @@ excerpt: Launch your first hosted Connect session with Open Data Labs.
 
 This guide gets you to a working embedded Connect flow using the current production API.
 
-**Need help? [Book a call](https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ2rpuc4WGsHiEugwjHcFVX7dGT4edhjEHIHU05iuHElg05-Goi0lVYGCNMxO4RNnt6E-ii69zcP).**
-
-<Callout theme="info">
+<Callout icon="📘">
   **After speed?** Start with the [Quickstart](/docs/quickstart), then get your API key from the [dashboard](https://dashboard.opendatalabs.com).
+</Callout>
+
+<Callout icon="🚧">
+  **Need help?** [Book a call](https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ2rpuc4WGsHiEugwjHcFVX7dGT4edhjEHIHU05iuHElg05-Goi0lVYGCNMxO4RNnt6E-ii69zcP).
 </Callout>
 
 ## Prerequisites
