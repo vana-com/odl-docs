@@ -4,13 +4,11 @@ excerpt: >-
   Open Data Labs lets your users connect external accounts in your app without
   you storing credentials or building source-specific integrations.
 ---
-<br />
+Open Data Labs gives product teams an embedded Connect flow for consented data access. Your app initiates a Connect session on the server, Open Data Labs hosts the user-facing connection flow, and your users choose what to share.
 
-<Callout icon="📘">
+<Callout icon="📘" theme="info">
   **After speed?** Start with the [Quickstart](/docs/quickstart), then get your API key from the [dashboard](https://dashboard.opendatalabs.com).
 </Callout>
-
-Open Data Labs gives product teams an embedded Connect flow for consented data access. Your app initiates a Connect session on the server, Open Data Labs hosts the user-facing connection flow, and your users choose what to share.
 
 The result is a simpler integration model:
 
