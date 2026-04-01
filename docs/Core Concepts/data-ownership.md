@@ -1,6 +1,8 @@
 ---
 title: Data Ownership
 excerpt: Understand the ownership model and trust boundaries in Context Gateway
+deprecated: true
+hidden: true
 ---
 
 # Data Ownership
