@@ -23,7 +23,7 @@ https://api.opendatalabs.com/api/v1
 All authenticated requests use a Bearer token:
 
 ```text
-Authorization: Bearer <<apiKey>>
+Authorization: Bearer <<keys:id>>
 ```
 
 Use your API key from [dashboard.opendatalabs.com](https://dashboard.opendatalabs.com) from trusted server-side code only.
@@ -50,7 +50,7 @@ Example:
 
 ```bash
 curl -X POST https://api.opendatalabs.com/api/v1/connect/sessions \
-  -H "Authorization: Bearer <<apiKey>>" \
+  -H "Authorization: Bearer <<keys:id>>" \
   -H "Content-Type: application/json" \
   -d '{
     "source": "instagram",

@@ -20,7 +20,7 @@ Before you start, make sure you have:
 Keep your API key in a server-only environment variable.
 
 ```bash
-OPENDATALABS_API_KEY=<<apiKey>>
+OPENDATALABS_API_KEY=<<keys:id>>
 ```
 
 ## Step 2: Get your public app ID
@@ -117,7 +117,7 @@ You can fetch the current source catalog from the API instead of hard-coding it.
 
 ```bash
 curl https://api.opendatalabs.com/api/v1/sources \
-  -H "Authorization: Bearer <<apiKey>>"
+  -H "Authorization: Bearer <<keys:id>>"
 ```
 
 ## Current production sources
