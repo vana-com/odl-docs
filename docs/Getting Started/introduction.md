@@ -5,7 +5,7 @@ excerpt: >-
   you storing credentials or building source-specific integrations.
 ---
 <Callout icon="📘" theme="info">
-  **After speed?** Start with the [Quickstart](/docs/quickstart), then get your API key from the <a href="https://dashboard.opendatalabs.com" target="_blank" rel="noreferrer">dashboard</a>.
+  **After speed?** Start with the [Quickstart](/docs/quickstart), then get your API key from the <a href="https://dashboard.opendatalabs.com" target="_blank" rel="noreferrer">OpenDataLabs Dashboard</a>.
 </Callout>
 
 Open Data Labs gives product teams an embedded Connect flow for consented data access. Your app initiates a Connect session on the server, Open Data Labs hosts the user-facing connection flow, and your users choose what to share.
