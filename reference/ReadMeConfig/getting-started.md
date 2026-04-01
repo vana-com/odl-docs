@@ -15,4 +15,4 @@ icon: icon-book1
 3. Call `POST /connect/sessions` from your server to start a [Connect Session](https://dev.opendatalabs.com/reference/createconnectsession) for a source.
 4. You can also list available [Sources](https://dev.opendatalabs.com/reference/listsources) and their [Scopes](https://dev.opendatalabs.com/reference/listsourcescopes).
 
-For a complete walkthrough, continue to the Quickstart and integration guides in the main docs.
+For a complete walkthrough, continue to the [Quickstart](https://dev.opendatalabs.com/docs/quickstart) and [integration guides](https://dev.opendatalabs.com/docs/integrating-connect-flow) in the main docs.
