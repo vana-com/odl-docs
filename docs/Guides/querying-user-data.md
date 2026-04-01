@@ -1,6 +1,8 @@
 ---
 title: Querying User Data
 excerpt: Query user data from Personal Servers using the Context Gateway API
+deprecated: true
+hidden: true
 ---
 
 # Querying User Data
