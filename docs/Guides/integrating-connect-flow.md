@@ -65,7 +65,7 @@ export async function createConnectSession() {
 | `scopes` | No | Scopes to request for the source |
 | `appId` | No | Public app ID like `odl_app_...`; if omitted, Open Data Labs uses the default app for the account |
 | `origin` | Yes | Exact embedding origin, for example `https://yourapp.com` |
-| `redirectUrl` | No | Optional redirect URL for legacy flows |
+| `redirectUrl` | No | Optional return URL for flows that need to hand control back to your app, such as native mobile, webview, or other client-managed experiences |
 
 ## Open the flow in a modal
 

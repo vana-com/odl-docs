@@ -139,7 +139,7 @@ app.post('/request-additional-scopes', async (req, res) => {
     source: 'spotify',
     scopes: newScopes,
     existingConnectionId: req.user.contextGatewayConnectionId,
-    redirectUrl: `${process.env.BASE_URL}/auth/callback`,
+      redirectUrl: `${process.env.BASE_URL}/connect/return`,
   });
 
   res.json({ connectUrl });
@@ -171,7 +171,7 @@ try {
       source: 'spotify',
       scopes: ['read:user_profile', 'read:playlists'],
       existingConnectionId: connectionId,
-      redirectUrl: `${process.env.BASE_URL}/auth/callback`,
+      redirectUrl: `${process.env.BASE_URL}/connect/return`,
     });
 
     return res.json({
