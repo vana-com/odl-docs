@@ -5,7 +5,7 @@ excerpt: Launch your first hosted Connect session with Open Data Labs.
 This guide gets you to a working embedded Connect flow using the current production API.
 
 <Callout icon="📘" theme="info">
-  **After speed?** Start with the [Quickstart](/docs/quickstart), then get your API key from the <a href="https://dashboard.opendatalabs.com" target="_blank" rel="noreferrer">dashboard</a>.
+  Get your **API key** from the <a href="https://dashboard.opendatalabs.com" target="_blank" rel="noreferrer">dashboard</a>.
 </Callout>
 
 <Callout icon="🚧" theme="warn">
