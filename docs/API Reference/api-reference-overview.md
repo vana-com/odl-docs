@@ -1,6 +1,7 @@
 ---
 title: API Reference Overview
 excerpt: Overview of the current public Open Data Labs API surface.
+hidden: true
 ---
 
 # API Reference Overview
