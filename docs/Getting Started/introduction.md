@@ -6,7 +6,7 @@ excerpt: >-
 ---
 <br />
 
-<Callout theme="info">
+<Callout icon="📘">
   **After speed?** Start with the [Quickstart](/docs/quickstart), then get your API key from the [dashboard](https://dashboard.opendatalabs.com).
 </Callout>
 
