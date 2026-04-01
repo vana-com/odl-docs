@@ -2,8 +2,6 @@
 title: Quickstart
 excerpt: Launch your first hosted Connect session with Open Data Labs.
 ---
-# Quickstart
-
 This guide gets you to a working embedded Connect flow using the current production API.
 
 <Callout icon="📘" theme="info">
