@@ -11,7 +11,7 @@ icon: icon-book1
 ## What to do next
 
 1. Create or select an app in your <Anchor label="OpenDataLabs Dashboard" target="_blank" href="https://dashboard.opendatalabs.com/">OpenDataLabs Dashboard</Anchor>.
-2. Add your app domain where you wish to launch Connect.
-3. Call `POST /connect/sessions` from your server to start a Connect session for a source.
+2. Add your app domain where you wish to launch a [Connect Session](https://dev.opendatalabs.com/reference/createconnectsession).
+3. Call `POST /connect/sessions` from your server to start a [Connect Session](https://dev.opendatalabs.com/reference/createconnectsession) for a source.
 
 For a complete walkthrough, continue to the Quickstart and integration guides in the main docs.
