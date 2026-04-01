@@ -16,7 +16,7 @@ We recommend starting with `GET /sources`. It returns the currently available so
 ## First call
 
 ```bash
-export OPENDATALABS_API_KEY=<<keys:id>>
+export OPENDATALABS_API_KEY=YOUR_OPENDATALABS_API_KEY
 
 curl --request GET \
   --url https://api.opendatalabs.com/api/v1/sources \
