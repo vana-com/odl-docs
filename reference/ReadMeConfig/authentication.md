@@ -14,13 +14,13 @@ For frontend integrations, use your public `appId` in the client and create Conn
 ## Server-side bearer token
 
 ```text
-Authorization: Bearer {keys.id}
+Authorization: Bearer {user.bearerAuth}
 ```
 
 ## Recommended environment variable
 
 ```bash
-export OPENDATALABS_API_KEY={keys.id}
+export OPENDATALABS_API_KEY={user.bearerAuth}
 ```
 
 ## Account state
