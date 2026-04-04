@@ -18,14 +18,16 @@ Before you start, make sure you have:
 
 * an API key from [dashboard.opendatalabs.com](https://dashboard.opendatalabs.com)
 * an app in the dashboard with at least one approved domain where you will launch Connect
+* a data encryption secret from your app settings in the dashboard
 * a server route in your app where you can safely call the Open Data Labs API
 
-## Step 1: Store your API key on the server
+## Step 1: Store your API key and secret on the server
 
-Keep your API key in a server-only environment variable.
+Keep your API key and encryption secret in server-only environment variables.
 
 ```bash
 OPENDATALABS_API_KEY=YOUR_OPENDATALABS_API_KEY
+VANA_SECRET=YOUR_VANA_SECRET
 ```
 
 ## Step 2: Get your public app ID
@@ -42,30 +44,23 @@ npm install @opendatalabs/connect-js
 
 ## Step 4: Create a Connect session on your server
 
-Call the Open Data Labs API from your backend and create a hosted Connect session for a source.
+Use the SDK's `createClient()` to create a Connect session. The client handles authentication and encryption automatically.
 
 ```ts
-export async function createConnectSession() {
-  const response = await fetch("https://api.opendatalabs.com/api/v1/connect/sessions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.OPENDATALABS_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      appId: "odl_app_123",
-      source: "instagram",
-      scopes: ["read:user_profile", "read:posts", "read:engagement"],
-      origin: "https://yourapp.com",
-    }),
-  });
+import { createClient } from "@opendatalabs/connect-js/server";
 
-  if (!response.ok) {
-    throw new Error(`Failed to create session: ${response.status}`);
-  }
+const odl = createClient({
+  apiBaseUrl: "https://api.opendatalabs.com/api/v1",
+  apiKey: process.env.OPENDATALABS_API_KEY!,
+  secret: process.env.VANA_SECRET!,
+});
 
-  return response.json();
-}
+const session = await odl.createConnectSession({
+  appId: "odl_app_123",
+  source: "instagram",
+  scopes: ["read:user_profile", "read:posts", "read:engagement"],
+  origin: "https://yourapp.com",
+});
 ```
 
 The `origin` must match one of the approved domains for the selected app exactly.
@@ -116,7 +111,16 @@ window.addEventListener("message", (event) => {
 });
 ```
 
-## Step 7: Retrieve sources and scopes dynamically
+## Step 7: Retrieve connection data
+
+After a successful connection, fetch the user's data from your server.
+
+```ts
+const result = await odl.fetchConnectionResult(connectionId);
+// result.data contains the user's connected data
+```
+
+## Step 8: Retrieve sources and scopes dynamically
 
 You can fetch the current source catalog from the API instead of hard-coding it.
 
