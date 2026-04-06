@@ -69,3 +69,9 @@ The current public API is focused on embedded Connect and account configuration.
 * server-side API key
 * approved domains
 * hosted Connect session creation
+
+  
+
+**Questions? Get in touch!** hello@opendatalabs.com
+
+<br />
