@@ -231,12 +231,12 @@
                       {
                         "id": "instagram",
                         "name": "Instagram",
-                        "description": "Connect your Instagram account to access profile data, posts, and engagement metrics",
+                        "description": "Connect your Instagram account to access profile data, following list, and ad interests",
                         "status": "available",
                         "scopes": [
-                          "read:user_profile",
-                          "read:posts",
-                          "read:engagement"
+                          "read:profile",
+                          "read:following",
+                          "read:ads"
                         ]
                       },
                       {
@@ -252,23 +252,23 @@
                       {
                         "id": "spotify",
                         "name": "Spotify",
-                        "description": "Connect your Spotify account to access listening history and playlists",
+                        "description": "Connect your Spotify account to access your profile, liked songs, and playlists",
                         "status": "coming_soon",
                         "scopes": [
-                          "read:user_profile",
-                          "read:playlists",
-                          "read:listening_history"
+                          "read:profile",
+                          "read:savedTracks",
+                          "read:playlists"
                         ]
                       },
                       {
                         "id": "github",
                         "name": "GitHub",
-                        "description": "Connect your GitHub account to access repositories and contribution data",
+                        "description": "Connect your GitHub account to access your profile, repositories, and starred repos",
                         "status": "coming_soon",
                         "scopes": [
-                          "read:user_profile",
-                          "read:repos",
-                          "read:contributions"
+                          "read:profile",
+                          "read:repositories",
+                          "read:starred"
                         ]
                       }
                     ]
@@ -473,7 +473,7 @@
                     "source": "instagram",
                     "scopes": [
                       "read:profile",
-                      "read:posts"
+                      "read:following"
                     ],
                     "appId": "odl_app_1234567890abcdef123456",
                     "origin": "https://app.example.com",
