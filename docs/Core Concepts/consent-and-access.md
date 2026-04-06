@@ -41,18 +41,15 @@ Context Gateway uses **scopes** to limit what data your app can access. Scopes a
 
 ### Example Scopes for Spotify
 
-* `read:user_profile` - Access to user's name, email, profile image
-* `read:playlists` - Access to user's playlists
-* `read:playback_history` - Access to user's listening history
-* `read:top_tracks` - Access to user's top 100 tracks
-* `read:library` - Access to user's saved tracks and albums
+* `read:profile` - Access to user's display name and account info
+* `read:savedTracks` - Access to user's liked songs
+* `read:playlists` - Access to user's playlists and their tracks
 
 ### Example Scopes for GitHub
 
-* `read:user_profile` - Access to public profile information
-* `read:repositories` - Access to list of repositories
-* `read:code` - Access to repository contents
-* `read:issues` - Access to issues and pull requests
+* `read:profile` - Access to username, bio, location, and follower counts
+* `read:repositories` - Access to repository list with metadata
+* `read:starred` - Access to repositories the user has starred
 
 When you create a connect URL, you specify exactly which scopes to request. The user grants or denies each scope group.
 
@@ -62,9 +59,9 @@ Users can grant different scopes to different applications. A single Personal Se
 
 ```
 Personal Server (Spotify)
-├── Your Music App: read:user_profile, read:playlists
-├── Music Recommender: read:playlists, read:playback_history
-└── Gaming App: read:user_profile
+├── Your Music App: read:profile, read:playlists
+├── Music Recommender: read:playlists, read:savedTracks
+└── Gaming App: read:profile
 ```
 
 Each application only sees data within its granted scopes.
@@ -133,7 +130,7 @@ When a user connects a source, they can use the same Personal Server across mult
 1. **User connects Spotify** in App A and grants `read:playlists`
 2. **User tries to use App B** and clicks "Connect Spotify"
 3. **Context Gateway detects** existing Personal Server for this Spotify account
-4. **User grants different scopes** (e.g., `read:user_profile`) in App B
+4. **User grants different scopes** (e.g., `read:profile`) in App B
 5. **Two separate connections** now exist, each with their own scopes
 
 ### Revoking Access to One App
@@ -154,7 +151,7 @@ If your app needs additional permissions after the initial connection, you can r
 const newConnectUrl = client.createConnectUrl({
   userId: 'user_123',
   source: 'spotify',
-  scopes: ['read:user_profile', 'read:playlists', 'read:playback_history'], // New scope
+  scopes: ['read:profile', 'read:playlists', 'read:savedTracks'], // New scope
   existingConnectionId: 'conn_abc123def456', // Re-authenticate for new scopes
   redirectUrl: 'https://yourapp.com/connect/return',
 });
