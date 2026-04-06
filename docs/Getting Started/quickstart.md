@@ -55,7 +55,7 @@ export async function createConnectSession() {
     body: JSON.stringify({
       appId: "odl_app_123",
       source: "instagram",
-      scopes: ["read:user_profile", "read:posts", "read:engagement"],
+      scopes: ["read:profile", "read:following", "read:ads"],
       origin: "https://yourapp.com",
     }),
   });

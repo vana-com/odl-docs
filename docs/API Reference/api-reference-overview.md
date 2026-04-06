@@ -49,7 +49,7 @@ curl -X POST https://api.opendatalabs.com/api/v1/connect/sessions \
   -H "Content-Type: application/json" \
   -d '{
     "source": "instagram",
-    "scopes": ["read:user_profile", "read:posts", "read:engagement"],
+    "scopes": ["read:profile", "read:following", "read:ads"],
     "origin": "https://yourapp.com"
   }'
 ```
