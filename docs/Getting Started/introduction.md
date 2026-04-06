@@ -1,77 +1,44 @@
 ---
 title: Introduction
 excerpt: >-
-  Open Data Labs lets your users connect external accounts in your app without
-  you storing credentials or building source-specific integrations.
+  Context Gateway gives your users a single click to share cross-platform data
+  with your application. You get real personal context from day one.
 ---
-<Callout icon="📘" theme="info">
-  **After speed?** Start with the [Quickstart](/docs/quickstart), then get your API key from the <a href="https://dashboard.opendatalabs.com" target="_blank" rel="noreferrer">OpenDataLabs Dashboard</a>.
-</Callout>
+Context Gateway gives your users a single click to share cross-platform data with your application. You get real personal context from day one. One integration instead of hundreds. No cold start.
 
-Open Data Labs gives product teams an embedded Connect flow for consented data access. Your app initiates a Connect session on the server, Open Data Labs hosts the user-facing connection flow, and your users choose what to share.
+## How it is built
 
-The result is a simpler integration model:
+Context Gateway is a hosted, developer-ready layer built on Vana, an open source data portability network that gives individuals the tools to reclaim and port their data from the platforms they use.
 
-* Your server holds a secret API key
+Vana handles the portability infrastructure. It is decentralised and stateless by design.
+
+Context Gateway is what we built on top of it for developers. It packages that portability infrastructure into a single API, a hosted Connect flow, and data availability services so the context your users choose to share is standardised, hosted, and ready to use in your application without the underlying complexity.
+
+The result: your users port their cross-platform context into your product in one click. You query it through one API. No source-specific integrations. No credential handling. No consent infrastructure to build from scratch.
+
+## What it does
+
+Your app initiates a Connect session. Context Gateway hosts the user-facing flow. Your user chooses what to share and authorises their accounts. Your application receives structured, standardised context.
+
+* Your server holds an API key
 * Your frontend launches a hosted Connect session
-* Open Data Labs handles the source-specific automation
-* Your users stay in control of which account and scopes they authorize
+* Context Gateway handles source-specific automation and data standardisation
+* Your user controls which accounts and scopes they authorise
 
-## Why teams use Open Data Labs
+## Why teams use it
 
-Building this in-house means taking on:
+Building this in-house means taking on source-specific auth and automation, brittle platform API dependencies, consent UI and lifecycle handling, and credential risk. Context Gateway replaces all of that with one API and one embedded flow.
 
-* source-specific auth and automation logic
-* brittle browser edge cases
-* consent UI and lifecycle handling
-* credential-handling risk
+## What is available now
 
-Open Data Labs gives you one API and one embedded flow instead.
+* Hosted Connect sessions
+* Approved-domain enforcement
+* Server API keys
+* Account-level configuration in the dashboard
+* Available sources: Instagram, iCloud Notes
 
-## What the current product does
+A full source catalogue including Spotify, GitHub, and many others is coming. See the Sources page for details.
 
-Today, Open Data Labs supports:
-
-* hosted Connect sessions
-* approved-domain enforcement
-* server API keys
-* account-level configuration in the dashboard
-* available sources:
-  * Instagram
-  * iCloud Notes
-
-Additional sources like Spotify and GitHub are visible in the roadmap, but they are not yet generally available in the production API.
-
-## Integration model
-
-The current integration has four parts:
-
-1. Your team gets an API key from the [dashboard](https://dashboard.opendatalabs.com).
-2. You approve the domains where Connect can be launched.
-3. Your server creates a Connect session through the API.
-4. Your frontend opens the returned hosted Connect URL in a modal or iframe.
-
-This keeps your backend in control of the integration while avoiding long-lived secrets in the browser.
-
-## Security model
-
-| Principle                                       | What it means                                                                                             |
-| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| **Your server holds the secret**                | Use your API key only from trusted backend code.                                                          |
-| **Your frontend launches short-lived sessions** | The browser should open hosted Connect sessions, not call the API with a long-lived secret.               |
-| **Approved domains are enforced**               | Connect sessions only work from domains you have explicitly approved.                                     |
-| **Credentials are not stored by your app**      | The user authenticates during the hosted flow; your app should not capture or persist source credentials. |
-
-## What comes next
-
-The current public API is focused on embedded Connect and account configuration. Durable connection-management APIs and broader SDK surfaces are planned, but the best current integration path is:
-
-* server-side API key
-* approved domains
-* hosted Connect session creation
-
-  
-
-**Questions? Get in touch!** hello@opendatalabs.com
+Questions or feature requests: [hello@opendatalabs.com](mailto:hello@opendatalabs.com)
 
 <br />
