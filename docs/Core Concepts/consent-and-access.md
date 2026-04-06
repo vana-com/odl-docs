@@ -2,7 +2,6 @@
 title: Consent and Access
 excerpt: Manage user consent, scopes, and data access control
 ---
-
 # Consent and Access
 
 Context Gateway's consent model ensures users maintain fine-grained control over their data. This document explains how consent works, how it's enforced, and how to handle revocation in your application.
@@ -30,9 +29,9 @@ At this point, your app has a `connectionId` for that source and can query data 
 
 Your app can query the user's data as long as:
 
-- The `connectionId` is valid
-- The user has not revoked consent
-- Your query only requests data within the granted scopes
+* The `connectionId` is valid
+* The user has not revoked consent
+* Your query only requests data within the granted scopes
 
 If any of these conditions is violated, the query fails.
 
@@ -42,18 +41,18 @@ Context Gateway uses **scopes** to limit what data your app can access. Scopes a
 
 ### Example Scopes for Spotify
 
-- `read:user_profile` - Access to user's name, email, profile image
-- `read:playlists` - Access to user's playlists
-- `read:playback_history` - Access to user's listening history
-- `read:top_tracks` - Access to user's top 100 tracks
-- `read:library` - Access to user's saved tracks and albums
+* `read:user_profile` - Access to user's name, email, profile image
+* `read:playlists` - Access to user's playlists
+* `read:playback_history` - Access to user's listening history
+* `read:top_tracks` - Access to user's top 100 tracks
+* `read:library` - Access to user's saved tracks and albums
 
 ### Example Scopes for GitHub
 
-- `read:user_profile` - Access to public profile information
-- `read:repositories` - Access to list of repositories
-- `read:code` - Access to repository contents
-- `read:issues` - Access to issues and pull requests
+* `read:user_profile` - Access to public profile information
+* `read:repositories` - Access to list of repositories
+* `read:code` - Access to repository contents
+* `read:issues` - Access to issues and pull requests
 
 When you create a connect URL, you specify exactly which scopes to request. The user grants or denies each scope group.
 
@@ -76,10 +75,10 @@ Users can revoke access at any time via the Context Gateway dashboard or within 
 
 ### What Happens on Revocation
 
-- The `connectionId` remains valid, but queries fail
-- Your app receives a `consent_revoked` error
-- The user's data remains in their Personal Server
-- The user can re-grant access later
+* The `connectionId` remains valid, but queries fail
+* Your app receives a `consent_revoked` error
+* The user's data remains in their Personal Server
+* The user can re-grant access later
 
 ### Example: Checking Connection Status
 
@@ -141,9 +140,9 @@ When a user connects a source, they can use the same Personal Server across mult
 
 If the user revokes access in App A:
 
-- App A can no longer query Spotify data
-- App B continues to work (separate connection)
-- The Personal Server and data remain intact
+* App A can no longer query Spotify data
+* App B continues to work (separate connection)
+* The Personal Server and data remain intact
 
 Each application's access is independent.
 
@@ -173,3 +172,9 @@ The user will be asked to authorize the new scopes. After the flow returns to yo
 4. **Be transparent**: Tell users what data you're accessing
 5. **Cache wisely**: Don't cache user data indefinitely
 6. **Respect timing**: Revocation happens immediately; update your UI accordingly
+
+<br />
+
+<br />
+
+**Questions? Get in touch!** [hello@opendatalabs.com](mailto:hello@opendatalabs.com)
