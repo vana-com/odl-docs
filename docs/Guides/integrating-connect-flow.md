@@ -2,7 +2,6 @@
 title: Integrating the Connect Flow
 excerpt: Implement the current hosted Connect session flow in your app.
 ---
-
 # Integrating the Connect Flow
 
 The Connect flow is the core integration surface for Open Data Labs. Your backend creates a short-lived session, and your frontend embeds the hosted Connect URL.
@@ -11,14 +10,14 @@ The Connect flow is the core integration surface for Open Data Labs. Your backen
 
 Use this split:
 
-- **server**
-  - stores `OPENDATALABS_API_KEY`
-  - creates Connect sessions for a specific app
-- **frontend**
-  - uses the public app ID for the integration surface
-  - requests a session from your backend
-  - opens the returned `connectUrl`
-  - handles `postMessage` events from the hosted flow
+* **server**
+  * stores `OPENDATALABS_API_KEY`
+  * creates Connect sessions for a specific app
+* **frontend**
+  * uses the public app ID for the integration surface
+  * requests a session from your backend
+  * opens the returned `connectUrl`
+  * handles `postMessage` events from the hosted flow
 
 In the dashboard, create an app for each integration surface where you embed Connect. Domains are approved per app, not globally for the whole account.
 
@@ -59,13 +58,13 @@ export async function createConnectSession() {
 
 ## Request fields
 
-| Field | Required | Description |
-| --- | --- | --- |
-| `source` | Yes | Source identifier like `instagram` or `icloud_notes` |
-| `scopes` | No | Scopes to request for the source |
-| `appId` | No | Public app ID like `odl_app_...`; if omitted, Open Data Labs uses the default app for the account |
-| `origin` | Yes | Exact embedding origin, for example `https://yourapp.com` |
-| `redirectUrl` | No | Optional return URL for flows that need to hand control back to your app, such as native mobile, webview, or other client-managed experiences |
+| Field         | Required | Description                                                                                                                                   |
+| ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `source`      | Yes      | Source identifier like `instagram` or `icloud_notes`                                                                                          |
+| `scopes`      | No       | Scopes to request for the source                                                                                                              |
+| `appId`       | No       | Public app ID like `odl_app_...`; if omitted, Open Data Labs uses the default app for the account                                             |
+| `origin`      | Yes      | Exact embedding origin, for example `https://yourapp.com`                                                                                     |
+| `redirectUrl` | No       | Optional return URL for flows that need to hand control back to your app, such as native mobile, webview, or other client-managed experiences |
 
 ## Open the flow in a modal
 
@@ -114,9 +113,9 @@ Fix this by adding the exact embedding origin to the matching app in the Open Da
 
 Examples:
 
-- `https://app.example.com`
-- `https://staging.example.com`
-- `http://localhost:3000`
+* `https://app.example.com`
+* `https://staging.example.com`
+* `http://localhost:3000`
 
 Do not include paths, query strings, or fragments.
 
@@ -126,3 +125,9 @@ Do not include paths, query strings, or fragments.
 2. Treat the hosted Connect session as short-lived.
 3. Validate your frontend event origin before acting on messages.
 4. Use the live source catalog from `/api/v1/sources` instead of hard-coding roadmap sources.
+
+<br />
+
+<br />
+
+**Questions? Get in touch!** [hello@opendatalabs.com](mailto:hello@opendatalabs.com)
