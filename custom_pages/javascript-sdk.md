@@ -79,7 +79,7 @@ Import from `@opendatalabs/connect-js/react`. Run client-side.
 
 Wrap your app (or the subtree that needs Connect) with `OpenDataLabsProvider`. Pass it a `createSession` function that calls your backend — this keeps your API key and encryption secret off the client.
 
-```tsx
+```javascript
 import { OpenDataLabsProvider } from "@opendatalabs/connect-js/react";
 
 <OpenDataLabsProvider
