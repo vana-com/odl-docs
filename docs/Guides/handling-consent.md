@@ -22,7 +22,7 @@ console.log(connection);
 //   userId: 'user_123',
 //   source: 'spotify',
 //   isValid: true,
-//   scopes: ['read:user_profile', 'read:playlists'],
+//   scopes: ['read:profile', 'read:playlists'],
 //   connectedAt: '2026-03-27T10:30:00Z',
 //   lastUsed: '2026-03-27T14:45:00Z',
 //   lastSyncAt: '2026-03-27T15:00:00Z',
@@ -134,7 +134,7 @@ If your application needs additional permissions, you can request them at any ti
 
 ```javascript
 app.post('/request-additional-scopes', async (req, res) => {
-  const newScopes = req.body.scopes; // e.g., ['read:playback_history']
+  const newScopes = req.body.scopes; // e.g., ['read:savedTracks']
 
   const connectUrl = client.createConnectUrl({
     userId: req.user.id,
@@ -171,7 +171,7 @@ try {
     const connectUrl = client.createConnectUrl({
       userId: req.user.id,
       source: 'spotify',
-      scopes: ['read:user_profile', 'read:playlists'],
+      scopes: ['read:profile', 'read:playlists'],
       existingConnectionId: connectionId,
       redirectUrl: `${process.env.BASE_URL}/connect/return`,
     });
@@ -200,14 +200,14 @@ console.log(allConnections);
 //     source: 'spotify',
 //     app: 'music-app',
 //     isValid: true,
-//     scopes: ['read:user_profile', 'read:playlists']
+//     scopes: ['read:profile', 'read:playlists']
 //   },
 //   {
 //     id: 'conn_def456',
 //     source: 'spotify',
 //     app: 'recommendation-engine',
 //     isValid: true,
-//     scopes: ['read:playback_history']
+//     scopes: ['read:savedTracks']
 //   }
 // ]
 ```

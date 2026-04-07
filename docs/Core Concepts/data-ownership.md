@@ -109,7 +109,7 @@ Here's how data ownership flows through a typical integration:
 1. User authenticates with Spotify
    → User owns Spotify data and Personal Server
 
-2. User grants your app read:playlists scope
+2. User grants your app read:playlists scope (Spotify)
    → Your app can query playlists from the Personal Server
 
 3. Your app stores user name in session memory
