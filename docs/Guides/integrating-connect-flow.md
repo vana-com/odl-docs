@@ -11,7 +11,7 @@ The Connect flow is the core integration surface for Open Data Labs. Your backen
 Use this split:
 
 - **server**
-  - stores `OPENDATALABS_API_KEY` and `VANA_SECRET`
+  - stores `OPENDATALABS_API_KEY` and `OPENDATALABS_SECRET`
   - creates Connect sessions for a specific app
 - **frontend**
   - uses the public app ID for the integration surface
@@ -37,7 +37,7 @@ import { createClient } from "@opendatalabs/connect-js/server";
 const odl = createClient({
   apiBaseUrl: "https://api.opendatalabs.com/api/v1",
   apiKey: process.env.OPENDATALABS_API_KEY!,
-  secret: process.env.VANA_SECRET!,
+  secret: process.env.OPENDATALABS_SECRET!,
 });
 
 const session = await odl.createConnectSession({
