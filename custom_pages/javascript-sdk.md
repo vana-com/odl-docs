@@ -3,14 +3,11 @@ title: JavaScript SDK
 fullscreen: false
 hidden: false
 ---
-
-# JavaScript SDK
-
 ```bash
 npm install @opendatalabs/connect-js
 ```
 
----
+***
 
 ## Server
 
@@ -28,15 +25,15 @@ const odl = createClient({
 });
 ```
 
-| Option | Required | Description |
-| --- | --- | --- |
-| `apiBaseUrl` | Yes | Base URL for the API |
-| `apiKey` | Yes | Your server API key |
-| `secret` | Yes | Your encryption secret. Comma-separate multiple values to support key rotation |
+| Option       | Required | Description                                                                    |
+| ------------ | -------- | ------------------------------------------------------------------------------ |
+| `apiBaseUrl` | Yes      | Base URL for the API                                                           |
+| `apiKey`     | Yes      | Your server API key                                                            |
+| `secret`     | Yes      | Your encryption secret. Comma-separate multiple values to support key rotation |
 
 Returns an object with `createConnectSession` and `fetchConnectionResult`.
 
----
+***
 
 ### `odl.createConnectSession(input)`
 
@@ -53,15 +50,15 @@ const session = await odl.createConnectSession({
 // session.connectionId — use this to fetch results after success
 ```
 
-| Field | Required | Description |
-| --- | --- | --- |
-| `source` | Yes | Source identifier, e.g. `instagram` |
-| `origin` | Yes | Exact embedding origin, e.g. `https://yourapp.com` |
-| `appId` | No | Public app ID; defaults to the account's default app |
-| `scopes` | No | Scopes to request |
-| `redirectUrl` | No | Return URL for native or webview flows |
+| Field         | Required | Description                                          |
+| ------------- | -------- | ---------------------------------------------------- |
+| `source`      | Yes      | Source identifier, e.g. `instagram`                  |
+| `origin`      | Yes      | Exact embedding origin, e.g. `https://yourapp.com`   |
+| `appId`       | No       | Public app ID; defaults to the account's default app |
+| `scopes`      | No       | Scopes to request                                    |
+| `redirectUrl` | No       | Return URL for native or webview flows               |
 
----
+***
 
 ### `odl.fetchConnectionResult(connectionId)`
 
@@ -72,7 +69,7 @@ const result = await odl.fetchConnectionResult(connectionId);
 // result.data — the user's connected data
 ```
 
----
+***
 
 ## React
 
@@ -100,12 +97,12 @@ import { OpenDataLabsProvider } from "@opendatalabs/connect-js/react";
 </OpenDataLabsProvider>
 ```
 
-| Prop | Required | Description |
-| --- | --- | --- |
-| `createSession` | Yes | Async function that calls your backend and returns `{ connectionId, connectToken, connectUrl }` |
-| `appId` | No | Passed through to `createSession` |
+| Prop            | Required | Description                                                                                     |
+| --------------- | -------- | ----------------------------------------------------------------------------------------------- |
+| `createSession` | Yes      | Async function that calls your backend and returns `{ connectionId, connectToken, connectUrl }` |
+| `appId`         | No       | Passed through to `createSession`                                                               |
 
----
+***
 
 ### `useConnect()`
 
@@ -123,7 +120,7 @@ const session = await connect({
 
 Must be used inside `OpenDataLabsProvider`.
 
----
+***
 
 ### `createConnectIframe(session)`
 
@@ -137,7 +134,7 @@ iframe.style.height = "720px";
 document.getElementById("modal-body")?.appendChild(iframe);
 ```
 
----
+***
 
 ### `listenForConnectMessages(connectUrl, events)`
 
@@ -155,11 +152,11 @@ const unlisten = listenForConnectMessages(session.connectUrl, {
 // Call unlisten() when done
 ```
 
-| Event | Payload | Description |
-| --- | --- | --- |
-| `onReady` | — | The hosted flow has loaded |
-| `onSuccess` | `{ connectionId }` | The user completed the flow |
-| `onExit` | — | The user closed the flow without completing |
+| Event       | Payload            | Description                                 |
+| ----------- | ------------------ | ------------------------------------------- |
+| `onReady`   | —                  | The hosted flow has loaded                  |
+| `onSuccess` | `{ connectionId }` | The user completed the flow                 |
+| `onExit`    | —                  | The user closed the flow without completing |
 
 <br />
 
