@@ -27,6 +27,15 @@ Authorization: Bearer YOUR_OPENDATALABS_API_KEY
 
 Use your API key from [dashboard.opendatalabs.com](https://dashboard.opendatalabs.com) from trusted server-side code only.
 
+## Encryption
+
+All apps must have a data encryption secret configured before creating Connect sessions. Generate one in Dashboard → App Settings → Data Encryption Secret, then store it as `OPENDATALABS_ENCRYPTION_SECRET` in your server environment. The SDK uses it to decrypt connection results; the secret never leaves your server.
+
+```bash
+OPENDATALABS_API_KEY=YOUR_OPENDATALABS_API_KEY
+OPENDATALABS_ENCRYPTION_SECRET=YOUR_OPENDATALABS_ENCRYPTION_SECRET
+```
+
 ## Main endpoints
 
 ### `GET /sources`
