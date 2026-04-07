@@ -27,7 +27,7 @@ Keep your API key and encryption secret in server-only environment variables.
 
 ```bash
 OPENDATALABS_API_KEY=YOUR_OPENDATALABS_API_KEY
-OPENDATALABS_SECRET=YOUR_OPENDATALABS_SECRET
+OPENDATALABS_ENCRYPTION_SECRET=YOUR_OPENDATALABS_ENCRYPTION_SECRET
 ```
 
 ## Step 2: Get your public app ID
@@ -52,7 +52,7 @@ import { createClient } from "@opendatalabs/connect-js/server";
 const odl = createClient({
   apiBaseUrl: "https://api.opendatalabs.com/api/v1",
   apiKey: process.env.OPENDATALABS_API_KEY!,
-  secret: process.env.OPENDATALABS_SECRET!,
+  secret: process.env.OPENDATALABS_ENCRYPTION_SECRET!,
 });
 
 const session = await odl.createConnectSession({
