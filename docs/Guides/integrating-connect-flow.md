@@ -10,14 +10,14 @@ The Connect flow is the core integration surface for Open Data Labs. Your backen
 
 Use this split:
 
-* **server**
-  * stores `OPENDATALABS_API_KEY`
-  * creates Connect sessions for a specific app
-* **frontend**
-  * uses the public app ID for the integration surface
-  * requests a session from your backend
-  * opens the returned `connectUrl`
-  * handles `postMessage` events from the hosted flow
+- **server**
+  - stores `OPENDATALABS_API_KEY` and `VANA_SECRET`
+  - creates Connect sessions for a specific app
+- **frontend**
+  - uses the public app ID for the integration surface
+  - requests a session from your backend
+  - opens the returned `connectUrl`
+  - handles `postMessage` events from the hosted flow
 
 In the dashboard, create an app for each integration surface where you embed Connect. Domains are approved per app, not globally for the whole account.
 
@@ -32,28 +32,20 @@ import { OpenDataLabsProvider, useConnect } from "@opendatalabs/connect-js/react
 ## Create a Connect session
 
 ```ts
-export async function createConnectSession() {
-  const response = await fetch("https://api.opendatalabs.com/api/v1/connect/sessions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.OPENDATALABS_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      appId: "odl_app_123",
-      source: "instagram",
-      scopes: ["read:profile", "read:following", "read:ads"],
-      origin: "https://yourapp.com",
-    }),
-  });
+import { createClient } from "@opendatalabs/connect-js/server";
 
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.message || "Failed to create Connect session");
-  }
+const odl = createClient({
+  apiBaseUrl: "https://api.opendatalabs.com/api/v1",
+  apiKey: process.env.OPENDATALABS_API_KEY!,
+  secret: process.env.VANA_SECRET!,
+});
 
-  return data;
-}
+const session = await odl.createConnectSession({
+  appId: "odl_app_123",
+  source: "instagram",
+  scopes: ["read:user_profile", "read:posts", "read:engagement"],
+  origin: "https://yourapp.com",
+});
 ```
 
 ## Request fields
@@ -103,6 +95,15 @@ window.addEventListener("message", (event) => {
       break;
   }
 });
+```
+
+## Retrieve connection data
+
+After a `success` event, fetch the connection result from your server. The client decrypts the response automatically.
+
+```ts
+const result = await odl.fetchConnectionResult(connectionId);
+// result.data contains the user's connected data
 ```
 
 ## Domain approval errors
