@@ -1,73 +1,79 @@
 ---
 title: Integrating the Connect Flow
-excerpt: Implement the current hosted Connect session flow in your app.
+excerpt: >-
+  The Connect flow is the core integration surface for Context Gateway. Your
+  backend creates a short-lived session. Your frontend embeds the hosted Connect
+  URL.
 ---
-# Integrating the Connect Flow
-
-The Connect flow is the core integration surface for Open Data Labs. Your backend creates a short-lived session, and your frontend embeds the hosted Connect URL.
+The Connect flow is the core integration surface for Context Gateway. Your backend creates a short-lived session. Your frontend embeds the hosted Connect URL.
 
 ## Recommended architecture
 
-Use this split:
+| Layer | Responsibility |
+|---|---|
+| Server | Stores \`OPENDATALABS_API_KEY\`. Creates Connect sessions for a specific app. |
+| Frontend | Uses the public app ID. Requests a session from your backend. Opens the returned \`connectUrl\`. Handles \`postMessage\` events from the hosted flow. |
 
-- **server**
-  - stores `OPENDATALABS_API_KEY` and `OPENDATALABS_ENCRYPTION_SECRET`
-  - creates Connect sessions for a specific app
-- **frontend**
-  - uses the public app ID for the integration surface
-  - requests a session from your backend
-  - opens the returned `connectUrl`
-  - handles `postMessage` events from the hosted flow
-
-In the dashboard, create an app for each integration surface where you embed Connect. Domains are approved per app, not globally for the whole account.
+In the dashboard, create an app for each integration surface where you embed Connect. Domains are approved per app, not globally for the account.
 
 ## SDK option
 
-For React apps, you can use `@opendatalabs/connect-js` and keep your session-creation logic on your backend:
+For React apps, use \`@opendatalabs/connect-js\` and keep session-creation logic on your backend:
 
-```tsx
-import { OpenDataLabsProvider, useConnect } from "@opendatalabs/connect-js/react";
+```javascript
+import { OpenDataLabsProvider, useConnect }
+  from '@opendatalabs/connect-js/react';
 ```
 
 ## Create a Connect session
 
-```ts
-import { createClient } from "@opendatalabs/connect-js/server";
-
-const odl = createClient({
-  apiBaseUrl: "https://api.opendatalabs.com/api/v1",
-  apiKey: process.env.OPENDATALABS_API_KEY!,
-  secret: process.env.OPENDATALABS_ENCRYPTION_SECRET!,
-});
-
-const session = await odl.createConnectSession({
-  appId: "odl_app_123",
-  source: "instagram",
-  scopes: ["read:user_profile", "read:posts", "read:engagement"],
-  origin: "https://yourapp.com",
-});
+```javascript
+export async function createConnectSession() {
+  const response = await fetch(
+    'https://api.opendatalabs.com/api/v1/connect/sessions',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: \`Bearer \${process.env.OPENDATALABS_API_KEY}\`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        appId: 'odl_app_123',
+        source: 'instagram',
+        scopes: ['read:user_profile', 'read:posts'],
+        origin: 'https://yourapp.com',
+      }),
+    }
+  );
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || 'Failed to create Connect session');
+  }
+  return data;
+}
 ```
 
 ## Request fields
 
-| Field         | Required | Description                                                                                                                                   |
-| ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `source`      | Yes      | Source identifier like `instagram` or `icloud_notes`                                                                                          |
-| `scopes`      | No       | Scopes to request for the source                                                                                                              |
-| `appId`       | No       | Public app ID like `odl_app_...`; if omitted, Open Data Labs uses the default app for the account                                             |
-| `origin`      | Yes      | Exact embedding origin, for example `https://yourapp.com`                                                                                     |
-| `redirectUrl` | No       | Optional return URL for flows that need to hand control back to your app, such as native mobile, webview, or other client-managed experiences |
+| Field | Required | Description |
+|---|---|---|
+| source | Yes | Source identifier, e.g. \`instagram\` or \`icloud_notes\` |
+| origin | Yes | Exact embedding origin, e.g. \`https://yourapp.com\` |
+| scopes | No | Scopes to request for the source |
+| appId | No | Public app ID. If omitted, uses the default app for the account. |
+| redirectUrl | No | Return URL for flows that need to hand control back to your app. |
 
 ## Open the flow in a modal
 
-```ts
-const session = await fetch("/api/connect-session").then((res) => res.json());
+```javascript
+const session = await fetch('/api/connect-session')
+  .then(res => res.json());
 
-const iframe = document.createElement("iframe");
+const iframe = document.createElement('iframe');
 iframe.src = session.connectUrl;
-iframe.style.width = "100%";
-iframe.style.height = "720px";
-iframe.style.border = "0";
+iframe.style.width = '100%';
+iframe.style.height = '720px';
+iframe.style.border = '0';
 
 modalBody.appendChild(iframe);
 modal.open();
@@ -75,60 +81,41 @@ modal.open();
 
 ## Handle lifecycle events
 
-The hosted flow sends events to the embedding window.
-
-```ts
-window.addEventListener("message", (event) => {
-  if (event.origin !== "https://dashboard.opendatalabs.com") {
+```javascript
+window.addEventListener('message', (event) => {
+  if (event.origin !== 'https://dashboard.opendatalabs.com') {
     return;
   }
-
   switch (event.data?.type) {
-    case "ready":
-      console.log("Connect ready");
+    case 'ready':
+      console.log('Connect ready');
       break;
-    case "success":
-      console.log("Connection completed", event.data.connectionId);
+    case 'success':
+      console.log('Connected:', event.data.connectionId);
       break;
-    case "exit":
-      console.log("User exited Connect");
+    case 'exit':
+      console.log('User exited Connect');
       break;
   }
 });
 ```
 
-## Retrieve connection data
-
-After a `success` event, fetch the connection result from your server. The client decrypts the response automatically.
-
-```ts
-const result = await odl.fetchConnectionResult(connectionId);
-// result.data contains the user's connected data
-```
-
 ## Domain approval errors
 
-If the origin is not approved for the selected app, session creation will fail with `origin_not_allowed`.
+If the origin is not approved for the selected app, session creation fails with \`origin_not_allowed\`. Fix this by adding the exact embedding origin to the matching app in the dashboard.
 
-Fix this by adding the exact embedding origin to the matching app in the Open Data Labs dashboard.
-
-Examples:
-
-* `https://app.example.com`
-* `https://staging.example.com`
-* `http://localhost:3000`
+Valid formats:
+- \`https://app.example.com\`
+- \`https://staging.example.com\`
+- \`http://localhost:3000\`
 
 Do not include paths, query strings, or fragments.
 
-## Current best practices
+## Best practices
 
-1. Keep your API key on the server.
-2. Treat the hosted Connect session as short-lived.
-3. Validate your frontend event origin before acting on messages.
-4. Use the live source catalog from `/api/v1/sources` instead of hard-coding roadmap sources.
+- Keep your API key on the server.
+- Treat the hosted Connect session as short-lived.
+- Validate your frontend event origin before acting on messages.
+- Use the live source catalogue from \`/api/v1/sources\`. Do not hard-code sources.
 
-<br />
-
-<br />
-
-**Questions? Get in touch!** [hello@opendatalabs.com](mailto:hello@opendatalabs.com)
+Questions, feature requests, or support: hello@opendatalabs.com
