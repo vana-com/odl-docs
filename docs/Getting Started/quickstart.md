@@ -1,149 +1,110 @@
 ---
 title: Quickstart
-excerpt: Launch your first hosted Connect session with Open Data Labs.
+excerpt: Get up and running with Context Gateway in a few steps.
 ---
-This guide gets you to a working embedded Connect flow using the current production API.
-
-<Callout icon="📘" theme="info">
-  Get your **API key** from the <a href="https://dashboard.opendatalabs.com" target="_blank" rel="noreferrer">OpenDataLabs Dashboard</a>.
-</Callout>
-
-<Callout icon="🚧" theme="warn">
-  **Need help?** [Book a call](https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ2rpuc4WGsHiEugwjHcFVX7dGT4edhjEHIHU05iuHElg05-Goi0lVYGCNMxO4RNnt6E-ii69zcP).
-</Callout>
+Get up and running with Context Gateway in a few steps.
 
 ## Prerequisites
 
-Before you start, make sure you have:
+- A web application built with Node.js/Express or your preferred framework
+- Basic familiarity with REST APIs and OAuth-style flows
 
-* an API key from [dashboard.opendatalabs.com](https://dashboard.opendatalabs.com)
-* an app in the dashboard with at least one approved domain where you will launch Connect
-* a data encryption secret from your app settings in the dashboard
-* a server route in your app where you can safely call the Open Data Labs API
+## Step 1: Get your API key
 
-## Step 1: Store your API key and secret on the server
-
-Keep your API key and encryption secret in server-only environment variables.
+Create an account at [dashboard.opendatalabs.com](https://dashboard.opendatalabs.com). Your API key is available immediately after sign-up under Settings. Store it as an environment variable. It should never appear in client-side code.
 
 ```bash
-OPENDATALABS_API_KEY=YOUR_OPENDATALABS_API_KEY
-OPENDATALABS_ENCRYPTION_SECRET=YOUR_OPENDATALABS_ENCRYPTION_SECRET
+CONTEXT_GATEWAY_API_KEY=your_api_key_here
 ```
 
-## Step 2: Get your public app ID
-
-Each dashboard app has a public app ID, for example `odl_app_...`. Use it in your frontend or include it when your server creates sessions for a specific app.
-
-## Step 3: Install the SDK
-
-If you are building a React frontend, install the SDK and use its React helpers to open Connect cleanly.
+## Step 2: Install the SDK
 
 ```bash
-npm install @opendatalabs/connect-js
+npm install @opendatalabs/context-gateway
 ```
 
-## Step 4: Create a Connect session on your server
+## Step 3: Initialise the client
 
-Use the SDK's `createClient()` to create a Connect session. The client handles authentication and encryption automatically.
+```javascript
+import { ContextGatewayClient } from '@opendatalabs/context-gateway';
 
-```ts
-import { createClient } from "@opendatalabs/connect-js/server";
-
-const odl = createClient({
-  apiBaseUrl: "https://api.opendatalabs.com/api/v1",
-  apiKey: process.env.OPENDATALABS_API_KEY!,
-  secret: process.env.OPENDATALABS_ENCRYPTION_SECRET!,
-});
-
-const session = await odl.createConnectSession({
-  appId: "odl_app_123",
-  source: "instagram",
-  scopes: ["read:user_profile", "read:posts", "read:engagement"],
-  origin: "https://yourapp.com",
+const client = new ContextGatewayClient({
+  apiKey: process.env.CONTEXT_GATEWAY_API_KEY,
 });
 ```
 
-The `origin` must match one of the approved domains for the selected app exactly.
+## Step 4: Create a Connect URL
 
-## Step 5: Open the hosted Connect URL in your frontend
+When you want a user to connect a data source, create a Connect URL and redirect them. The example below uses Instagram, which is available in the production API.
 
-You can handle this yourself, or use the SDK:
+```javascript
+const connectUrl = client.createConnectUrl({
+  userId: 'user_123',
+  source: 'instagram',
+  scopes: ['read:user_profile', 'read:posts'],
+  redirectUrl: 'https://yourapp.com/auth/callback',
+});
 
-```tsx
-import { OpenDataLabsProvider } from "@opendatalabs/connect-js/react";
+res.redirect(connectUrl);
 ```
 
-Return the session payload from your backend to your frontend and open `connectUrl` in a modal or iframe.
+## Step 5: Handle the callback
 
-```ts
-const session = await createConnectSessionFromYourBackend();
+After the user authenticates, they are redirected to your callback URL with a `connectionId`.
 
-const iframe = document.createElement("iframe");
-iframe.src = session.connectUrl;
-iframe.style.width = "100%";
-iframe.style.height = "720px";
-iframe.style.border = "0";
+```javascript
+app.get('/auth/callback', async (req, res) => {
+  const { connectionId, error, error_description } = req.query;
 
-document.getElementById("connect-modal-body")?.appendChild(iframe);
-```
-
-## Step 6: Listen for success events
-
-The hosted Connect flow posts lifecycle events back to the parent window.
-
-```ts
-window.addEventListener("message", (event) => {
-  if (event.origin !== "https://dashboard.opendatalabs.com") {
-    return;
+  if (error) {
+    console.error(\`Connect failed: \${error} - \${error_description}\`);
+    return res.redirect('/connect?error=true');
   }
 
-  if (event.data?.type === "ready") {
-    console.log("Connect is ready");
-  }
+  await db.users.update(req.user.id, {
+    contextGatewayConnectionId: connectionId,
+  });
 
-  if (event.data?.type === "success") {
-    console.log("Connection completed", event.data.connectionId);
-  }
-
-  if (event.data?.type === "exit") {
-    console.log("User closed the flow");
-  }
+  res.redirect('/dashboard?connected=true');
 });
 ```
 
-## Step 7: Retrieve connection data
+## Step 6: Query user data
 
-After a successful connection, fetch the user's data from your server.
-
-```ts
-const result = await odl.fetchConnectionResult(connectionId);
-// result.data contains the user's connected data
+```javascript
+const data = await client.query({
+  connectionId: 'conn_abc123def456',
+  query: 'SELECT name, username, bio, follower_count FROM user_profile',
+});
 ```
 
-## Step 8: Retrieve sources and scopes dynamically
+## Example response
 
-You can fetch the current source catalog from the API instead of hard-coding it.
-
-```bash
-curl https://api.opendatalabs.com/api/v1/sources \
-  -H "Authorization: Bearer $OPENDATALABS_API_KEY"
+```json
+{
+  "source": "instagram",
+  "retrieved_at": "2026-04-05T09:15:00Z",
+  "data": {
+    "name": "Jane Smith",
+    "username": "janesmith",
+    "bio": "Designer based in London.",
+    "follower_count": 3820,
+    "following_count": 412,
+    "post_count": 94,
+    "profile_image": "https://cdn.example.com/profile/janesmith.jpg",
+    "is_verified": false,
+    "account_type": "personal"
+  }
+}
 ```
 
-## Current production sources
-
-Today, the available production sources are:
-
-* Instagram
-* iCloud Notes
+Full schema documentation per source — including all available fields, types, and nullability — is in the API Reference at [dev.opendatalabs.com/reference](https://dev.opendatalabs.com/reference)
 
 ## Next steps
 
-* Read [How It Works](/docs/how-it-works) for the product model
-* Read [Integrating the Connect Flow](/docs/integrating-connect-flow) for implementation details
-* Review the [API Reference Overview](/docs/api-reference-overview)
+- Read [Personal Servers](/docs/personal-servers) to understand how data is stored
+- Read [Consent and Access](/docs/consent-and-access) for scope handling and revocation
+- Read the full API Reference at [dev.opendatalabs.com/reference](https://dev.opendatalabs.com/reference)
+- Read [Integrating the Connect Flow](/docs/integrating-the-connect-flow) for advanced options
 
-<br />
-
-<br />
-
-**Questions? Get in touch!** [hello@opendatalabs.com](mailto:hello@opendatalabs.com)
+Questions, feature requests, or support: hello@opendatalabs.com
