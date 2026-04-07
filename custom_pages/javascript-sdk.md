@@ -3,6 +3,8 @@ title: JavaScript SDK
 fullscreen: false
 hidden: false
 ---
+Start by installing the `@opendatalabs/connect-js` package.
+
 ```bash
 npm install @opendatalabs/connect-js
 ```
