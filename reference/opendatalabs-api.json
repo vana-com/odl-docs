@@ -61,7 +61,8 @@
               "instagram",
               "icloud_notes",
               "spotify",
-              "github"
+              "github",
+              "oura"
             ]
           },
           "name": {
@@ -117,7 +118,8 @@
               "instagram",
               "icloud_notes",
               "spotify",
-              "github"
+              "github",
+              "oura"
             ],
             "example": "instagram"
           },
@@ -199,7 +201,8 @@
                           "instagram",
                           "icloud_notes",
                           "spotify",
-                          "github"
+                          "github",
+                          "oura"
                         ]
                       },
                       "name": {
@@ -264,11 +267,22 @@
                         "id": "github",
                         "name": "GitHub",
                         "description": "Connect your GitHub account to access your profile, repositories, and starred repos",
-                        "status": "coming_soon",
+                        "status": "available",
                         "scopes": [
                           "read:profile",
                           "read:repositories",
                           "read:starred"
+                        ]
+                      },
+                      {
+                        "id": "oura",
+                        "name": "Oura Ring",
+                        "description": "Connect your Oura Ring to access readiness scores, sleep data, and activity metrics",
+                        "status": "available",
+                        "scopes": [
+                          "read:readiness",
+                          "read:sleep",
+                          "read:activity"
                         ]
                       }
                     ]
@@ -329,7 +343,8 @@
                 "instagram",
                 "icloud_notes",
                 "spotify",
-                "github"
+                "github",
+                "oura"
               ],
               "example": "instagram"
             }
@@ -444,7 +459,8 @@
                       "instagram",
                       "icloud_notes",
                       "spotify",
-                      "github"
+                      "github",
+                      "oura"
                     ],
                     "example": "instagram"
                   },
