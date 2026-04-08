@@ -78,6 +78,10 @@ const data = await client.query({
 });
 ```
 
+<Callout icon="⚠️" theme="warn">
+  **Connection data is single-use.** Data can only be fetched once per connection. Store the returned data if you need to access it again.
+</Callout>
+
 ## Example response
 
 ```json
@@ -106,5 +110,23 @@ Full schema documentation per source — including all available fields, types, 
 - Read [Consent and Access](/docs/consent-and-access) for scope handling and revocation
 - Read the full API Reference at [dev.opendatalabs.com/reference](https://dev.opendatalabs.com/reference)
 - Read [Integrating the Connect Flow](/docs/integrating-the-connect-flow) for advanced options
+
+## Get started with AI
+
+Copy this prompt into your AI coding assistant to scaffold an integration:
+
+```
+I want to integrate OpenDataLabs (Context Gateway) into my app to let users
+connect their data sources (e.g. Instagram, iCloud Notes).
+
+Help me set up:
+1. Install the @opendatalabs/context-gateway SDK
+2. A server-side client initialized with my API key
+3. A Connect URL that redirects users to authenticate with a data source
+4. A callback handler that captures the connectionId
+5. A query to fetch the user's connected data
+
+Reference the quickstart at https://dev.opendatalabs.com/docs/quickstart
+```
 
 Questions, feature requests, or support: hello@opendatalabs.com
