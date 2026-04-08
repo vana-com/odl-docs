@@ -2,18 +2,21 @@
 title: Data Sources
 excerpt: Supported data sources, available scopes, and example response schemas.
 ---
-
 ## Supported sources
 
-| Source | Status | Scopes |
-|--------|--------|--------|
-| Instagram | Available | `read:profile`, `read:following`, `read:ads` |
-| iCloud Notes | Available | `read:notes`, `read:folders` |
-| GitHub | Available | `read:profile`, `read:repositories`, `read:starred` |
-| Oura Ring | Available | `read:readiness`, `read:sleep`, `read:activity` |
-| Spotify | Coming soon | `read:profile`, `read:savedTracks`, `read:playlists` |
+We're adding sources weekly. Don't see a source that you need? Get in touch hello@opendatalabs.xyz
 
----
+| Source       | Status      | Scopes                                               |
+| ------------ | ----------- | ---------------------------------------------------- |
+| Instagram    | Available   | `read:profile`, `read:following`, `read:ads`         |
+| iCloud Notes | Available   | `read:notes`, `read:folders`                         |
+| GitHub       | Available   | `read:profile`, `read:repositories`, `read:starred`  |
+| Oura Ring    | Available   | `read:readiness`, `read:sleep`, `read:activity`      |
+| Spotify      | Coming soon | `read:profile`, `read:savedTracks`, `read:playlists` |
+
+***
+
+<br />
 
 ## Instagram
 
@@ -21,11 +24,11 @@ excerpt: Supported data sources, available scopes, and example response schemas.
 
 ### Scopes
 
-| Scope | Description |
-|-------|-------------|
-| `read:profile` | Username, bio, follower and following counts |
-| `read:following` | List of accounts the user follows |
-| `read:ads` | Advertisers seen and ad topics based on user activity |
+| Scope            | Description                                           |
+| ---------------- | ----------------------------------------------------- |
+| `read:profile`   | Username, bio, follower and following counts          |
+| `read:following` | List of accounts the user follows                     |
+| `read:ads`       | Advertisers seen and ad topics based on user activity |
 
 ### Example response
 
@@ -56,7 +59,7 @@ excerpt: Supported data sources, available scopes, and example response schemas.
 }
 ```
 
----
+***
 
 ## iCloud Notes
 
@@ -64,10 +67,10 @@ excerpt: Supported data sources, available scopes, and example response schemas.
 
 ### Scopes
 
-| Scope | Description |
-|-------|-------------|
-| `read:notes` | Notes content, titles, and metadata |
-| `read:folders` | Notes folder structure |
+| Scope          | Description                         |
+| -------------- | ----------------------------------- |
+| `read:notes`   | Notes content, titles, and metadata |
+| `read:folders` | Notes folder structure              |
 
 ### Example response
 
@@ -98,7 +101,7 @@ excerpt: Supported data sources, available scopes, and example response schemas.
 }
 ```
 
----
+***
 
 ## GitHub
 
@@ -106,11 +109,11 @@ excerpt: Supported data sources, available scopes, and example response schemas.
 
 ### Scopes
 
-| Scope | Description |
-|-------|-------------|
-| `read:profile` | Username, bio, location, and follower counts |
+| Scope               | Description                                                  |
+| ------------------- | ------------------------------------------------------------ |
+| `read:profile`      | Username, bio, location, and follower counts                 |
 | `read:repositories` | Repository list with metadata (language, stars, update time) |
-| `read:starred` | Repositories the user has starred |
+| `read:starred`      | Repositories the user has starred                            |
 
 ### Example response
 
@@ -160,7 +163,7 @@ excerpt: Supported data sources, available scopes, and example response schemas.
 }
 ```
 
----
+***
 
 ## Oura Ring
 
@@ -168,11 +171,11 @@ excerpt: Supported data sources, available scopes, and example response schemas.
 
 ### Scopes
 
-| Scope | Description |
-|-------|-------------|
+| Scope            | Description                                       |
+| ---------------- | ------------------------------------------------- |
 | `read:readiness` | Daily readiness scores, HRV, and recovery metrics |
-| `read:sleep` | Sleep duration, phases, heart rate, and HRV data |
-| `read:activity` | Daily step counts, calories, and activity levels |
+| `read:sleep`     | Sleep duration, phases, heart rate, and HRV data  |
+| `read:activity`  | Daily step counts, calories, and activity levels  |
 
 ### Example response
 
@@ -218,7 +221,7 @@ excerpt: Supported data sources, available scopes, and example response schemas.
 }
 ```
 
----
+***
 
 ## Spotify _(coming soon)_
 
@@ -226,8 +229,8 @@ excerpt: Supported data sources, available scopes, and example response schemas.
 
 ### Scopes
 
-| Scope | Description |
-|-------|-------------|
-| `read:profile` | Display name and account info |
-| `read:savedTracks` | Liked songs |
-| `read:playlists` | Playlists and their tracks |
+| Scope              | Description                   |
+| ------------------ | ----------------------------- |
+| `read:profile`     | Display name and account info |
+| `read:savedTracks` | Liked songs                   |
+| `read:playlists`   | Playlists and their tracks    |
