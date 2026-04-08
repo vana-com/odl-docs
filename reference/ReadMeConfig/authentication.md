@@ -20,11 +20,14 @@ For frontend integrations, use your public `appId` in the client and create Conn
 Authorization: Bearer YOUR_OPENDATALABS_API_KEY
 ```
 
-## Recommended environment variable
+## Recommended environment variables
 
 ```bash
 export OPENDATALABS_API_KEY=YOUR_OPENDATALABS_API_KEY
+export OPENDATALABS_ENCRYPTION_SECRET=YOUR_OPENDATALABS_ENCRYPTION_SECRET
 ```
+
+Generate your encryption secret in Dashboard → App Settings → Data Encryption Secret. The SDK uses it to decrypt connection results; the secret never leaves your server.
 
 ## Account state
 
