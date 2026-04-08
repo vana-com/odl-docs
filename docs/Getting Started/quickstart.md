@@ -12,6 +12,10 @@ This guide gets you to a working embedded Connect flow using the current product
   **Need help?** [Book a call](https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ2rpuc4WGsHiEugwjHcFVX7dGT4edhjEHIHU05iuHElg05-Goi0lVYGCNMxO4RNnt6E-ii69zcP).
 </Callout>
 
+## Supported data sources
+
+Instagram, iCloud Notes, GitHub, and Oura Ring are available today. Spotify and others are coming soon. See [Data Sources](/docs/data-sources) for full schemas and available scopes.
+
 ## Prerequisites
 
 Before you start, make sure you have:
@@ -135,6 +139,8 @@ Today, the available production sources are:
 
 * Instagram
 * iCloud Notes
+* GitHub
+* Oura Ring
 
 ## Next steps
 
