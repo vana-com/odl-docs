@@ -58,11 +58,11 @@
           "id": {
             "type": "string",
             "enum": [
+              "github",
+              "oura",
               "instagram",
               "icloud_notes",
-              "spotify",
-              "github",
-              "oura"
+              "spotify"
             ]
           },
           "name": {
@@ -115,13 +115,13 @@
           "source": {
             "type": "string",
             "enum": [
+              "github",
+              "oura",
               "instagram",
               "icloud_notes",
-              "spotify",
-              "github",
-              "oura"
+              "spotify"
             ],
-            "example": "instagram"
+            "example": "github"
           },
           "scopes": {
             "type": "array",
@@ -198,11 +198,11 @@
                       "id": {
                         "type": "string",
                         "enum": [
+                          "github",
+                          "oura",
                           "instagram",
                           "icloud_notes",
-                          "spotify",
-                          "github",
-                          "oura"
+                          "spotify"
                         ]
                       },
                       "name": {
@@ -232,12 +232,35 @@
                   "sources": {
                     "value": [
                       {
-                        "id": "instagram",
-                        "name": "Instagram",
-                        "description": "Connect your Instagram account to access profile data, following list, and ad interests",
+                        "id": "github",
+                        "name": "GitHub",
+                        "description": "Exports your GitHub profile, repositories, and starred repositories.",
                         "status": "available",
                         "scopes": [
                           "read:profile",
+                          "read:repositories",
+                          "read:starred"
+                        ]
+                      },
+                      {
+                        "id": "oura",
+                        "name": "Oura Ring",
+                        "description": "Exports your Oura Ring readiness scores, sleep data, and daily activity.",
+                        "status": "available",
+                        "scopes": [
+                          "read:readiness",
+                          "read:sleep",
+                          "read:activity"
+                        ]
+                      },
+                      {
+                        "id": "instagram",
+                        "name": "Instagram",
+                        "description": "Exports your Instagram profile and posts.",
+                        "status": "available",
+                        "scopes": [
+                          "read:profile",
+                          "read:posts",
                           "read:following",
                           "read:ads"
                         ]
@@ -245,7 +268,7 @@
                       {
                         "id": "icloud_notes",
                         "name": "iCloud Notes",
-                        "description": "Connect your iCloud account to access your Apple Notes and folders",
+                        "description": "Exports your Apple Notes and folders from iCloud.",
                         "status": "available",
                         "scopes": [
                           "read:notes",
@@ -261,28 +284,6 @@
                           "read:profile",
                           "read:savedTracks",
                           "read:playlists"
-                        ]
-                      },
-                      {
-                        "id": "github",
-                        "name": "GitHub",
-                        "description": "Connect your GitHub account to access your profile, repositories, and starred repos",
-                        "status": "available",
-                        "scopes": [
-                          "read:profile",
-                          "read:repositories",
-                          "read:starred"
-                        ]
-                      },
-                      {
-                        "id": "oura",
-                        "name": "Oura Ring",
-                        "description": "Connect your Oura Ring to access readiness scores, sleep data, and activity metrics",
-                        "status": "available",
-                        "scopes": [
-                          "read:readiness",
-                          "read:sleep",
-                          "read:activity"
                         ]
                       }
                     ]
@@ -340,13 +341,13 @@
             "schema": {
               "type": "string",
               "enum": [
+                "github",
+                "oura",
                 "instagram",
                 "icloud_notes",
-                "spotify",
-                "github",
-                "oura"
+                "spotify"
               ],
-              "example": "instagram"
+              "example": "github"
             }
           }
         ],
@@ -456,13 +457,13 @@
                   "source": {
                     "type": "string",
                     "enum": [
+                      "github",
+                      "oura",
                       "instagram",
                       "icloud_notes",
-                      "spotify",
-                      "github",
-                      "oura"
+                      "spotify"
                     ],
-                    "example": "instagram"
+                    "example": "github"
                   },
                   "scopes": {
                     "type": "array",
