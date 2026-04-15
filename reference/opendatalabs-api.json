@@ -278,7 +278,7 @@
                       {
                         "id": "spotify",
                         "name": "Spotify",
-                        "description": "Connect your Spotify account to access your profile, liked songs, and playlists",
+                        "description": "Exports your Spotify library, playlists, listening history, and preferences.",
                         "status": "coming_soon",
                         "scopes": [
                           "read:profile",
