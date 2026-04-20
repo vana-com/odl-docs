@@ -9,9 +9,9 @@ Get up and running with Context Gateway in a few steps.
 - A web application built with Node.js/Express or your preferred framework
 - Basic familiarity with REST APIs and OAuth-style flows
 
-## Step 1: Get your API key and encryption secret
+## Step 1: Get your API key
 
-Create an account at [dashboard.opendatalabs.com](https://dashboard.opendatalabs.com). Generate an API key and a data encryption secret under Settings, then store both as environment variables. They should never appear in client-side code.
+Create an account at [dashboard.opendatalabs.com](https://dashboard.opendatalabs.com). Generate an API key under Settings and store it as an environment variable. For server-side result decryption, also generate a data encryption secret and store it as `OPENDATALABS_ENCRYPTION_SECRET`. Neither value should appear in client-side code.
 
 ```bash
 OPENDATALABS_API_KEY=your_api_key_here
@@ -116,13 +116,13 @@ Full schema documentation per source — including all available fields, types, 
 Copy this prompt into your AI coding assistant if you want help scaffolding an integration:
 
 ```
-I want to add Open Data Labs Connect to my app.
+Help me add Open Data Labs Connect to my app.
 
 Use these docs as the source of truth:
 - https://dev.opendatalabs.com/docs/quickstart
 - https://dev.opendatalabs.com/docs/javascript-sdk
 
-Help me implement:
+Implement:
 1. npm install @opendatalabs/connect-js
 2. A server-side createClient(...) using OPENDATALABS_API_KEY and OPENDATALABS_ENCRYPTION_SECRET
 3. A backend route that calls createConnectSession(...)
