@@ -11,7 +11,7 @@ Get up and running with Context Gateway in a few steps.
 
 ## Step 1: Get your API key
 
-Create an account at [dashboard.opendatalabs.com](https://dashboard.opendatalabs.com). Generate an API key under Settings and store it as an environment variable. For server-side result decryption, also generate a data encryption secret and store it as `OPENDATALABS_ENCRYPTION_SECRET`. Neither value should appear in client-side code.
+Create an account at [dashboard.opendatalabs.com](https://dashboard.opendatalabs.com). Generate an API key under Settings and store it as an environment variable. To fetch connection results later, also generate a data encryption secret and store it as `OPENDATALABS_ENCRYPTION_SECRET`. Keep both values out of client-side code.
 
 ```bash
 OPENDATALABS_API_KEY=your_api_key_here
