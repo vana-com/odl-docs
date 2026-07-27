@@ -1,8 +1,8 @@
 ---
 title: Quickstart
-excerpt: Launch your first hosted Connect session with Open Data Labs.
+excerpt: Launch your first Connect flow with Open Data Labs.
 ---
-This guide gets you to a working embedded Connect flow using the current production API.
+This guide gets you to a working Connect flow using the current production API.
 
 <Callout icon="📘" theme="info">
   Get your **API key** from the <a href="https://dashboard.opendatalabs.com" target="_blank" rel="noreferrer">OpenDataLabs Dashboard</a>.
@@ -32,6 +32,8 @@ Keep your API key and encryption secret in server-only environment variables.
 ```bash
 OPENDATALABS_API_KEY=YOUR_OPENDATALABS_API_KEY
 OPENDATALABS_ENCRYPTION_SECRET=YOUR_OPENDATALABS_ENCRYPTION_SECRET
+ODL_APP_ID=odl_app_123
+APP_URL=https://yourapp.com
 ```
 
 ## Step 2: Get your public app ID
@@ -46,85 +48,107 @@ If you are building a React frontend, install the SDK and use its React helpers 
 npm install @opendatalabs/connect-js
 ```
 
-## Step 4: Create a Connect session on your server
+## Step 4: Create Connect routes on your server
 
-Use the SDK's `createClient()` to create a Connect session. The client handles authentication and encryption automatically.
+Choose the source and scopes on the server.
 
 ```ts
-import { createClient } from "@opendatalabs/connect-js/server";
+// lib/odl.ts
+import { createConnectController } from "@opendatalabs/connect-js/server";
 
-const odl = createClient({
+export const odl = createConnectController({
   apiBaseUrl: "https://api.opendatalabs.com/api/v1",
   apiKey: process.env.OPENDATALABS_API_KEY!,
-  secret: process.env.OPENDATALABS_ENCRYPTION_SECRET!,
-});
-
-const session = await odl.createConnectSession({
-  appId: "odl_app_123",
+  appId: process.env.ODL_APP_ID!,
+  defaultOrigin: process.env.APP_URL!,
   source: "instagram",
-  scopes: ["read:user_profile", "read:posts", "read:engagement"],
-  origin: "https://yourapp.com",
+  scopes: ["read:profile", "read:posts"],
 });
 ```
 
-The `origin` must match one of the approved domains for the selected app exactly.
+```ts
+// app/api/connect/session/route.ts
+import { odl } from "@/lib/odl";
 
-## Step 5: Open the hosted Connect URL in your frontend
+export async function POST() {
+  return Response.json(
+    await odl.createConnectSession({
+      redirectUrl: `${process.env.APP_URL!}/connect/return`,
+    })
+  );
+}
+```
 
-You can handle this yourself, or use the SDK:
+```ts
+// app/api/connect/status/route.ts
+import { odl } from "@/lib/odl";
+
+export async function GET(request: Request) {
+  const connectionId = new URL(request.url).searchParams.get("connectionId");
+  if (!connectionId) {
+    return Response.json({ error: "Missing connectionId" }, { status: 400 });
+  }
+  return Response.json(await odl.getStatus(connectionId));
+}
+```
+
+```ts
+// app/api/connect/data/route.ts
+import { odl } from "@/lib/odl";
+
+export async function GET(request: Request) {
+  const connectionId = new URL(request.url).searchParams.get("connectionId");
+  if (!connectionId) {
+    return Response.json({ error: "Missing connectionId" }, { status: 400 });
+  }
+  return Response.json(await odl.readAllWhenReady(connectionId));
+}
+```
+
+## Step 5: Open Connect in a second tab
+
+Connect runs in Vana. Keep your app open while the user approves the request.
 
 ```tsx
-import { OpenDataLabsProvider } from "@opendatalabs/connect-js/react";
-```
+import { useTwoTabConnect } from "@opendatalabs/connect-js/react";
 
-Return the session payload from your backend to your frontend and open `connectUrl` in a modal or iframe.
-
-```ts
-const session = await createConnectSessionFromYourBackend();
-
-const iframe = document.createElement("iframe");
-iframe.src = session.connectUrl;
-iframe.style.width = "100%";
-iframe.style.height = "720px";
-iframe.style.border = "0";
-
-document.getElementById("connect-modal-body")?.appendChild(iframe);
-```
-
-## Step 6: Listen for success events
-
-The hosted Connect flow posts lifecycle events back to the parent window.
-
-```ts
-window.addEventListener("message", (event) => {
-  if (event.origin !== "https://dashboard.opendatalabs.com") {
-    return;
-  }
-
-  if (event.data?.type === "ready") {
-    console.log("Connect is ready");
-  }
-
-  if (event.data?.type === "success") {
-    console.log("Connection completed", event.data.connectionId);
-  }
-
-  if (event.data?.type === "exit") {
-    console.log("User closed the flow");
-  }
+const connect = useTwoTabConnect({
+  openingUrl: process.env.NEXT_PUBLIC_VANA_CONNECT_OPENING_URL,
+  createSession: async () => {
+    const response = await fetch("/api/connect/session", { method: "POST" });
+    if (!response.ok) throw new Error("Failed to create Connect session");
+    return response.json();
+  },
+  getStatus: async (connectionId) => {
+    const response = await fetch(`/api/connect/status?connectionId=${connectionId}`);
+    if (!response.ok) throw new Error("Failed to fetch Connect status");
+    return response.json();
+  },
+  readResult: async (connectionId) => {
+    const response = await fetch(`/api/connect/data?connectionId=${connectionId}`);
+    if (!response.ok) throw new Error("Failed to read Connect data");
+    return response.json();
+  },
 });
+
+<button disabled={connect.state.type !== "idle"} onClick={() => connect.start()}>
+  Connect Instagram
+</button>;
 ```
 
-## Step 7: Retrieve connection data
+For development or staging, set `openingUrl` to the matching Vana app, for
+example `https://app-dev.vana.org/connect/opening`.
 
-After a successful connection, fetch the user's data from your server.
+## Step 6: Retrieve connection data
+
+`readAllWhenReady()` returns `result.results`, keyed by approved scope.
 
 ```ts
-const result = await odl.fetchConnectionResult(connectionId);
-// result.data contains the user's connected data
+const result = await odl.readAllWhenReady(connectionId);
+// result.results contains data keyed by scope
 ```
 
-## Step 8: Retrieve sources and scopes dynamically
+## Step 7: Retrieve sources and scopes dynamically
 
 You can fetch the current source catalog from the API instead of hard-coding it.
 
