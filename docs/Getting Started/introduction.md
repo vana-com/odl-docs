@@ -4,9 +4,7 @@ excerpt: >-
   Open Data Labs lets your users connect external accounts in your app without
   you storing credentials or building source-specific integrations.
 ---
-<Callout icon="📘" theme="info">
-  **After speed?** Start with the [Quickstart](/docs/quickstart), then get your API key from the <a href="https://dashboard.opendatalabs.com" target="_blank" rel="noreferrer">OpenDataLabs Dashboard</a>.
-</Callout>
+Start with the [Quickstart](/docs/quickstart), then get your API key from the <a href="https://dashboard.opendatalabs.com" target="_blank" rel="noreferrer">OpenDataLabs Dashboard</a>.
 
 Open Data Labs gives product teams an embedded Connect flow for consented data access. Your app initiates a Connect session on the server, Open Data Labs hosts the user-facing connection flow, and your users choose what to share.
 
@@ -32,15 +30,11 @@ Open Data Labs gives you one API and one embedded flow instead.
 
 Today, Open Data Labs supports:
 
-* hosted Connect sessions
+* Vana Data Connection Requests
 * approved-domain enforcement
 * server API keys
 * account-level configuration in the dashboard
-* available sources:
-  * Instagram
-  * iCloud Notes
-
-Additional sources like Spotify and GitHub are visible in the roadmap, but they are not yet generally available in the production API.
+* the current [source catalog](/docs/data-sources)
 
 ## Integration model
 
@@ -49,7 +43,7 @@ The current integration has four parts:
 1. Your team gets an API key from the [dashboard](https://dashboard.opendatalabs.com).
 2. You approve the domains where Connect can be launched.
 3. Your server creates a Connect session through the API.
-4. Your frontend opens the returned hosted Connect URL in a modal or iframe.
+4. Your frontend opens the returned Vana request in a second tab.
 
 This keeps your backend in control of the integration while avoiding long-lived secrets in the browser.
 
@@ -68,7 +62,7 @@ The current public API is focused on embedded Connect and account configuration.
 
 * server-side API key
 * approved domains
-* hosted Connect session creation
+* Connect session creation
 
   
 
