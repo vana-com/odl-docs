@@ -30,6 +30,19 @@ APP_URL=http://localhost:3000
 NEXT_PUBLIC_VANA_CONNECT_OPENING_URL=https://app.vana.org/connect/opening
 ```
 
+### Development environment
+
+To test against the development stack, create the app in [dashboard-dev.opendatalabs.com](https://dashboard-dev.opendatalabs.com), install the development SDK release, and replace the API and Vana URLs above.
+
+```bash
+npm install @opendatalabs/connect-js@dev
+```
+
+```bash
+ODL_API_BASE_URL=https://api-dev.opendatalabs.com/api/v1
+NEXT_PUBLIC_VANA_CONNECT_OPENING_URL=https://app-dev.vana.org/connect/opening
+```
+
 ## Step 3: Create the Connect controller
 
 Create `lib/odl.ts`.
