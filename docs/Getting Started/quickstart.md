@@ -43,11 +43,11 @@ export const odl = createConnectController({
   appId: process.env.ODL_APP_ID!,
   defaultOrigin: process.env.APP_URL!,
   source: "instagram",
-  scopes: ["instagram.profile", "instagram.posts"],
+  scopes: ["read:profile", "read:posts"],
 });
 ```
 
-This example requests Instagram profile and post data. Choose a source and its canonical scopes from the source catalog.
+This example requests Instagram profile and post data. Choose a source and its available scopes from the source catalog.
 
 ## Step 4: Create the server routes
 
