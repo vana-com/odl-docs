@@ -13,7 +13,7 @@ You need an Open Data Labs account and a Next.js app. In the dashboard, create a
 Create a Next.js app, then install the Connect SDK.
 
 ```bash
-npx create-next-app@latest my-odl-app --ts --app --no-src-dir --import-alias "@/*" --use-npm --yes
+npx create-next-app@latest my-odl-app --ts --tailwind --app --no-src-dir --import-alias "@/*" --use-npm --yes
 cd my-odl-app
 npm install @opendatalabs/connect-js
 ```
@@ -30,8 +30,6 @@ APP_URL=http://localhost:3000
 NEXT_PUBLIC_VANA_CONNECT_OPENING_URL=https://app.vana.org/connect/opening
 ```
 
-Keep `ODL_API_KEY` on the server. Do not add it to a `NEXT_PUBLIC_` variable.
-
 ## Step 3: Create the Connect controller
 
 Create `lib/odl.ts`.
@@ -45,11 +43,11 @@ export const odl = createConnectController({
   appId: process.env.ODL_APP_ID!,
   defaultOrigin: process.env.APP_URL!,
   source: "instagram",
-  scopes: ["read:profile", "read:posts"],
+  scopes: ["instagram.profile", "instagram.posts"],
 });
 ```
 
-This example requests Instagram profile and post data. Choose the source and scopes on your server.
+This example requests Instagram profile and post data. Choose a source and its canonical scopes from the source catalog.
 
 ## Step 4: Create the server routes
 
@@ -134,16 +132,30 @@ export default function Home() {
   }
 
   return (
-    <main>
+    <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center gap-6 p-6">
+      <div className="space-y-2">
+        <p className="text-sm font-medium text-sky-700">Open Data Labs</p>
+        <h1 className="text-3xl font-semibold tracking-tight">
+          Connect Instagram
+        </h1>
+        <p className="text-slate-600">
+          Connect your data in Vana, then return here to see the result.
+        </p>
+      </div>
       <button
+        className="w-fit rounded-md bg-sky-600 px-4 py-2 font-medium text-white shadow-sm transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
         disabled={connect.state.type !== "idle"}
         onClick={start}
         type="button"
       >
         {connect.state.type === "idle" ? "Connect Instagram" : "Connecting..."}
       </button>
-      {error ? <p>{error}</p> : null}
-      {result ? <pre>{JSON.stringify(result, null, 2)}</pre> : null}
+      {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      {result ? (
+        <pre className="max-h-96 overflow-auto rounded-lg bg-slate-950 p-4 text-sm text-slate-50">
+          {JSON.stringify(result, null, 2)}
+        </pre>
+      ) : null}
     </main>
   );
 }

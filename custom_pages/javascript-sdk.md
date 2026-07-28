@@ -24,7 +24,7 @@ const odl = createConnectController({
   appId: process.env.ODL_APP_ID!,
   defaultOrigin: process.env.APP_URL!,
   source: "instagram",
-  scopes: ["read:profile", "read:posts"],
+  scopes: ["instagram.profile", "instagram.posts"],
 });
 ```
 
