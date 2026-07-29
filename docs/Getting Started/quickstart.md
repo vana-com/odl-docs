@@ -6,7 +6,7 @@ This guide adds a complete Connect flow to a Next.js app. Your app opens Vana in
 
 ## Before you start
 
-You need an Open Data Labs account and a Next.js app. In the dashboard, create an app. Add `http://localhost:3000` to its Embed Origins. Copy its API key and public app ID.
+You need an [Open Data Labs account](https://dashboard.opendatalabs.com) and a Next.js app. In the dashboard, create an app. Add `http://localhost:3000` to its Embed Origins. Copy its API key and public app ID.
 
 ## Step 1: Create the app
 
