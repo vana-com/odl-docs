@@ -3,165 +3,100 @@ title: JavaScript SDK
 fullscreen: false
 hidden: false
 ---
-Start by installing the `@opendatalabs/connect-js` package.
+Install the `@opendatalabs/connect-js` package.
 
 ```bash
 npm install @opendatalabs/connect-js
 ```
 
-***
-
 ## Server
 
-Import from `@opendatalabs/connect-js/server`. Run server-side only — never expose your API key or encryption secret to the browser.
+Import server code from `@opendatalabs/connect-js/server`. Keep your API key on the server.
 
-### `createClient(options)`
+### `createConnectController(options)`
 
 ```ts
-import { createClient } from "@opendatalabs/connect-js/server";
+import { createConnectController } from "@opendatalabs/connect-js/server";
 
-const odl = createClient({
-  apiBaseUrl: "https://api.opendatalabs.com/api/v1",
-  apiKey: process.env.OPENDATALABS_API_KEY!,
-  secret: process.env.OPENDATALABS_ENCRYPTION_SECRET!,
+const odl = createConnectController({
+  apiBaseUrl: process.env.ODL_API_BASE_URL!,
+  apiKey: process.env.ODL_API_KEY!,
+  appId: process.env.ODL_APP_ID!,
+  defaultOrigin: process.env.APP_URL!,
+  source: "instagram",
+  scopes: ["read:profile", "read:posts"],
 });
 ```
 
-| Option       | Required | Description                                                                    |
-| ------------ | -------- | ------------------------------------------------------------------------------ |
-| `apiBaseUrl` | Yes      | Base URL for the API                                                           |
-| `apiKey`     | Yes      | Your server API key                                                            |
-| `secret`     | Yes      | Your encryption secret. Comma-separate multiple values to support key rotation |
-
-Returns an object with `createConnectSession` and `fetchConnectionResult`.
-
-***
+| Option | Required | Description |
+| --- | --- | --- |
+| `apiBaseUrl` | Yes | Base URL for the API. |
+| `apiKey` | Yes | API key for your server. |
+| `appId` | No | Public app ID from the dashboard. |
+| `defaultOrigin` | No | Exact approved origin for your app. |
+| `source` | Yes | Source identifier, such as `instagram`. |
+| `scopes` | Yes | Scopes to request from the source. |
 
 ### `odl.createConnectSession(input)`
 
-Creates a hosted Connect session.
+Creates a session and a Vana Data Connection Request.
 
 ```ts
 const session = await odl.createConnectSession({
-  appId: "odl_app_123",
-  source: "instagram",
-  scopes: ["read:user_profile", "read:posts"],
-  origin: "https://yourapp.com",
+  redirectUrl: "https://app.example.com",
 });
-// session.connectUrl — open this in an iframe
-// session.connectionId — use this to fetch results after success
 ```
 
-| Field         | Required | Description                                          |
-| ------------- | -------- | ---------------------------------------------------- |
-| `source`      | Yes      | Source identifier, e.g. `instagram`                  |
-| `origin`      | Yes      | Exact embedding origin, e.g. `https://yourapp.com`   |
-| `appId`       | No       | Public app ID; defaults to the account's default app |
-| `scopes`      | No       | Scopes to request                                    |
-| `redirectUrl` | No       | Return URL for native or webview flows               |
+Return the session to your frontend. Open `session.connectUrl` from the user click.
 
-***
+### `odl.getStatus(connectionId)`
 
-### `odl.fetchConnectionResult(connectionId)`
-
-Fetches connection data after a successful flow. Decrypts the response automatically using the configured secret.
+Returns the current session status and approved scopes.
 
 ```ts
-const result = await odl.fetchConnectionResult(connectionId);
-// result.data — the user's connected data
+const status = await odl.getStatus(connectionId);
 ```
 
-***
+### `odl.readAllWhenReady(connectionId)`
+
+Waits for approval and reads every requested scope.
+
+```ts
+const result = await odl.readAllWhenReady(connectionId);
+// result.results contains data keyed by scope
+```
 
 ## React
 
-Import from `@opendatalabs/connect-js/react`. Run client-side.
+Import React helpers from `@opendatalabs/connect-js/react`.
 
-### `OpenDataLabsProvider`
+### `useTwoTabConnect(options)`
 
-Wrap your app (or the subtree that needs Connect) with `OpenDataLabsProvider`. Pass it a `createSession` function that calls your backend — this keeps your API key and encryption secret off the client.
+Use this hook to open Vana from a click handler. It checks the session status and reads the result through your server routes.
 
-```javascript
-import { OpenDataLabsProvider } from "@opendatalabs/connect-js/react";
+```tsx
+import { useTwoTabConnect } from "@opendatalabs/connect-js/react";
 
-<OpenDataLabsProvider
-  appId="odl_app_123"
-  createSession={async (input) => {
-    const res = await fetch("/api/connect-session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(input),
-    });
-    return res.json(); // { connectionId, connectToken, connectUrl }
-  }}
->
-  {children}
-</OpenDataLabsProvider>
-```
-
-| Prop            | Required | Description                                                                                     |
-| --------------- | -------- | ----------------------------------------------------------------------------------------------- |
-| `createSession` | Yes      | Async function that calls your backend and returns `{ connectionId, connectToken, connectUrl }` |
-| `appId`         | No       | Passed through to `createSession`                                                               |
-
-***
-
-### `useConnect()`
-
-Returns a function that creates a Connect session via the provider's `createSession`.
-
-```ts
-const connect = useConnect();
-
-const session = await connect({
-  source: "instagram",
-  scopes: ["read:user_profile"],
+const connect = useTwoTabConnect({
+  openingUrl: process.env.NEXT_PUBLIC_VANA_CONNECT_OPENING_URL,
+  createSession: async () => {
+    const response = await fetch("/api/connect/session", { method: "POST" });
+    if (!response.ok) throw new Error("Failed to create Connect session");
+    return response.json();
+  },
+  getStatus: async (connectionId) => {
+    const response = await fetch(`/api/connect/status?connectionId=${encodeURIComponent(connectionId)}`);
+    if (!response.ok) throw new Error("Failed to fetch Connect status");
+    return response.json();
+  },
+  readResult: async (connectionId) => {
+    const response = await fetch(`/api/connect/data?connectionId=${encodeURIComponent(connectionId)}`);
+    if (!response.ok) throw new Error("Failed to read Connect data");
+    return response.json();
+  },
 });
-// session.connectUrl, session.connectionId
 ```
 
-Must be used inside `OpenDataLabsProvider`.
+Call `connect.start()` from the user click. Keep the original tab open until the read completes.
 
-***
-
-### `createConnectIframe(session)`
-
-Creates an `<iframe>` pointed at `session.connectUrl`.
-
-```ts
-import { createConnectIframe } from "@opendatalabs/connect-js/react";
-
-const iframe = createConnectIframe(session);
-iframe.style.height = "720px";
-document.getElementById("modal-body")?.appendChild(iframe);
-```
-
-***
-
-### `listenForConnectMessages(connectUrl, events)`
-
-Listens for lifecycle events posted by the hosted Connect flow. Returns a cleanup function.
-
-```ts
-import { listenForConnectMessages } from "@opendatalabs/connect-js/react";
-
-const unlisten = listenForConnectMessages(session.connectUrl, {
-  onReady: () => setLoading(false),
-  onSuccess: ({ connectionId }) => handleSuccess(connectionId),
-  onExit: () => closeModal(),
-});
-
-// Call unlisten() when done
-```
-
-| Event       | Payload            | Description                                 |
-| ----------- | ------------------ | ------------------------------------------- |
-| `onReady`   | —                  | The hosted flow has loaded                  |
-| `onSuccess` | `{ connectionId }` | The user completed the flow                 |
-| `onExit`    | —                  | The user closed the flow without completing |
-
-<br />
-
-<br />
-
-**Questions? Get in touch!** [hello@opendatalabs.com](mailto:hello@opendatalabs.com)
+Questions, feature requests, or support: hello@opendatalabs.com

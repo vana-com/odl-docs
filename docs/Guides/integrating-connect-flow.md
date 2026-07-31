@@ -1,134 +1,72 @@
 ---
 title: Integrating the Connect Flow
-excerpt: Implement the current hosted Connect session flow in your app.
+excerpt: Implement the Connect flow in your app.
 ---
-# Integrating the Connect Flow
-
-The Connect flow is the core integration surface for Open Data Labs. Your backend creates a short-lived session, and your frontend embeds the hosted Connect URL.
+The Connect flow has a server part and a frontend part. Your server creates the request and reads approved data. Your frontend opens Vana in a second tab.
 
 ## Recommended architecture
 
-Use this split:
+| Layer | Responsibility |
+| --- | --- |
+| Server | Stores the API key. Chooses the source and scopes. Creates sessions and reads data. |
+| Frontend | Opens Vana from a user click. Shows the data that your server returns. |
 
-- **server**
-  - stores `OPENDATALABS_API_KEY` and `OPENDATALABS_ENCRYPTION_SECRET`
-  - creates Connect sessions for a specific app
-- **frontend**
-  - uses the public app ID for the integration surface
-  - requests a session from your backend
-  - opens the returned `connectUrl`
-  - handles `postMessage` events from the hosted flow
+Create an app for each integration surface in the dashboard. Add the exact origin for that app, such as `https://app.example.com` or `http://localhost:3000`.
 
-In the dashboard, create an app for each integration surface where you embed Connect. Domains are approved per app, not globally for the whole account.
+## Create a session
 
-## SDK option
+Use `createConnectController` on your server. It creates a Vana Data Connection Request when you call `createConnectSession`.
 
-For React apps, you can use `@opendatalabs/connect-js` and keep your session-creation logic on your backend:
+```ts
+const session = await odl.createConnectSession({
+  redirectUrl: "https://app.example.com",
+});
+```
+
+Return the session from your server route. Keep the API key on the server.
+
+## Open Vana from the frontend
+
+For React apps, use `useTwoTabConnect`. It opens Vana from the user click, checks the session status, and requests the approved data through your server routes.
 
 ```tsx
-import { OpenDataLabsProvider, useConnect } from "@opendatalabs/connect-js/react";
-```
+import { useTwoTabConnect } from "@opendatalabs/connect-js/react";
 
-## Create a Connect session
-
-```ts
-import { createClient } from "@opendatalabs/connect-js/server";
-
-const odl = createClient({
-  apiBaseUrl: "https://api.opendatalabs.com/api/v1",
-  apiKey: process.env.OPENDATALABS_API_KEY!,
-  secret: process.env.OPENDATALABS_ENCRYPTION_SECRET!,
-});
-
-const session = await odl.createConnectSession({
-  appId: "odl_app_123",
-  source: "instagram",
-  scopes: ["read:user_profile", "read:posts", "read:engagement"],
-  origin: "https://yourapp.com",
-});
-```
-
-## Request fields
-
-| Field         | Required | Description                                                                                                                                   |
-| ------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `source`      | Yes      | Source identifier like `instagram` or `icloud_notes`                                                                                          |
-| `scopes`      | No       | Scopes to request for the source                                                                                                              |
-| `appId`       | No       | Public app ID like `odl_app_...`; if omitted, Open Data Labs uses the default app for the account                                             |
-| `origin`      | Yes      | Exact embedding origin, for example `https://yourapp.com`                                                                                     |
-| `redirectUrl` | No       | Optional return URL for flows that need to hand control back to your app, such as native mobile, webview, or other client-managed experiences |
-
-## Open the flow in a modal
-
-```ts
-const session = await fetch("/api/connect-session").then((res) => res.json());
-
-const iframe = document.createElement("iframe");
-iframe.src = session.connectUrl;
-iframe.style.width = "100%";
-iframe.style.height = "720px";
-iframe.style.border = "0";
-
-modalBody.appendChild(iframe);
-modal.open();
-```
-
-## Handle lifecycle events
-
-The hosted flow sends events to the embedding window.
-
-```ts
-window.addEventListener("message", (event) => {
-  if (event.origin !== "https://dashboard.opendatalabs.com") {
-    return;
-  }
-
-  switch (event.data?.type) {
-    case "ready":
-      console.log("Connect ready");
-      break;
-    case "success":
-      console.log("Connection completed", event.data.connectionId);
-      break;
-    case "exit":
-      console.log("User exited Connect");
-      break;
-  }
+const connect = useTwoTabConnect({
+  openingUrl: process.env.NEXT_PUBLIC_VANA_CONNECT_OPENING_URL,
+  createSession: async () => {
+    const response = await fetch("/api/connect/session", { method: "POST" });
+    if (!response.ok) throw new Error("Failed to create Connect session");
+    return response.json();
+  },
+  getStatus: async (connectionId) => {
+    const response = await fetch(`/api/connect/status?connectionId=${encodeURIComponent(connectionId)}`);
+    if (!response.ok) throw new Error("Failed to fetch Connect status");
+    return response.json();
+  },
+  readResult: async (connectionId) => {
+    const response = await fetch(`/api/connect/data?connectionId=${encodeURIComponent(connectionId)}`);
+    if (!response.ok) throw new Error("Failed to read Connect data");
+    return response.json();
+  },
 });
 ```
 
-## Retrieve connection data
+Keep the app open until the read completes. The user can finish consent in Vana while the original tab waits for the result.
 
-After a `success` event, fetch the connection result from your server. The client decrypts the response automatically.
+## Read approved data
+
+Call `readAllWhenReady` from your server route. It waits for the connection to become ready, reads each requested scope, and confirms that the request completed.
 
 ```ts
-const result = await odl.fetchConnectionResult(connectionId);
-// result.data contains the user's connected data
+const result = await odl.readAllWhenReady(connectionId);
+// result.results contains data keyed by scope
 ```
 
 ## Domain approval errors
 
-If the origin is not approved for the selected app, session creation will fail with `origin_not_allowed`.
+If the origin is not approved for the selected app, session creation returns `origin_not_allowed`.
 
-Fix this by adding the exact embedding origin to the matching app in the Open Data Labs dashboard.
+Add the exact origin in the dashboard. Do not include a path, query string, or fragment.
 
-Examples:
-
-* `https://app.example.com`
-* `https://staging.example.com`
-* `http://localhost:3000`
-
-Do not include paths, query strings, or fragments.
-
-## Current best practices
-
-1. Keep your API key on the server.
-2. Treat the hosted Connect session as short-lived.
-3. Validate your frontend event origin before acting on messages.
-4. Use the live source catalog from `/api/v1/sources` instead of hard-coding roadmap sources.
-
-<br />
-
-<br />
-
-**Questions? Get in touch!** [hello@opendatalabs.com](mailto:hello@opendatalabs.com)
+Questions, feature requests, or support: hello@opendatalabs.com

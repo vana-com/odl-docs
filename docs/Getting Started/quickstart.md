@@ -1,155 +1,176 @@
 ---
 title: Quickstart
-excerpt: Launch your first hosted Connect session with Open Data Labs.
+excerpt: Add a complete Connect flow to a Next.js app.
 ---
-This guide gets you to a working embedded Connect flow using the current production API.
+This guide adds a complete Connect flow to a Next.js app. Your app opens Vana in a second tab, then displays the approved data in the original tab.
 
-<Callout icon="📘" theme="info">
-  Get your **API key** from the <a href="https://dashboard.opendatalabs.com" target="_blank" rel="noreferrer">OpenDataLabs Dashboard</a>.
-</Callout>
+## Before you start
 
-<Callout icon="🚧" theme="warn">
-  **Need help?** [Book a call](https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ2rpuc4WGsHiEugwjHcFVX7dGT4edhjEHIHU05iuHElg05-Goi0lVYGCNMxO4RNnt6E-ii69zcP).
-</Callout>
+You need an [Open Data Labs account](https://dashboard.opendatalabs.com) and a Next.js app. In the dashboard, create an app. Add `http://localhost:3000` to its Embed Origins. Copy its API key and public app ID.
 
-## Supported data sources
+## Step 1: Create the app
 
-Instagram, iCloud Notes, GitHub, and Oura Ring are available today. Spotify and others are coming soon. See [Data Sources](/docs/data-sources) for full schemas and available scopes.
-
-## Prerequisites
-
-Before you start, make sure you have:
-
-* an API key from [dashboard.opendatalabs.com](https://dashboard.opendatalabs.com)
-* an app in the dashboard with at least one approved domain where you will launch Connect
-* a data encryption secret from your app settings in the dashboard
-* a server route in your app where you can safely call the Open Data Labs API
-
-## Step 1: Store your API key and secret on the server
-
-Keep your API key and encryption secret in server-only environment variables.
+Create a Next.js app, then install the Connect SDK.
 
 ```bash
-OPENDATALABS_API_KEY=YOUR_OPENDATALABS_API_KEY
-OPENDATALABS_ENCRYPTION_SECRET=YOUR_OPENDATALABS_ENCRYPTION_SECRET
-```
-
-## Step 2: Get your public app ID
-
-Each dashboard app has a public app ID, for example `odl_app_...`. Use it in your frontend or include it when your server creates sessions for a specific app.
-
-## Step 3: Install the SDK
-
-If you are building a React frontend, install the SDK and use its React helpers to open Connect cleanly.
-
-```bash
+npx create-next-app@latest my-odl-app --ts --tailwind --app --no-src-dir --import-alias "@/*" --use-npm --yes
+cd my-odl-app
 npm install @opendatalabs/connect-js
 ```
 
-## Step 4: Create a Connect session on your server
+## Step 2: Add environment variables
 
-Use the SDK's `createClient()` to create a Connect session. The client handles authentication and encryption automatically.
-
-```ts
-import { createClient } from "@opendatalabs/connect-js/server";
-
-const odl = createClient({
-  apiBaseUrl: "https://api.opendatalabs.com/api/v1",
-  apiKey: process.env.OPENDATALABS_API_KEY!,
-  secret: process.env.OPENDATALABS_ENCRYPTION_SECRET!,
-});
-
-const session = await odl.createConnectSession({
-  appId: "odl_app_123",
-  source: "instagram",
-  scopes: ["read:user_profile", "read:posts", "read:engagement"],
-  origin: "https://yourapp.com",
-});
-```
-
-The `origin` must match one of the approved domains for the selected app exactly.
-
-## Step 5: Open the hosted Connect URL in your frontend
-
-You can handle this yourself, or use the SDK:
-
-```tsx
-import { OpenDataLabsProvider } from "@opendatalabs/connect-js/react";
-```
-
-Return the session payload from your backend to your frontend and open `connectUrl` in a modal or iframe.
-
-```ts
-const session = await createConnectSessionFromYourBackend();
-
-const iframe = document.createElement("iframe");
-iframe.src = session.connectUrl;
-iframe.style.width = "100%";
-iframe.style.height = "720px";
-iframe.style.border = "0";
-
-document.getElementById("connect-modal-body")?.appendChild(iframe);
-```
-
-## Step 6: Listen for success events
-
-The hosted Connect flow posts lifecycle events back to the parent window.
-
-```ts
-window.addEventListener("message", (event) => {
-  if (event.origin !== "https://dashboard.opendatalabs.com") {
-    return;
-  }
-
-  if (event.data?.type === "ready") {
-    console.log("Connect is ready");
-  }
-
-  if (event.data?.type === "success") {
-    console.log("Connection completed", event.data.connectionId);
-  }
-
-  if (event.data?.type === "exit") {
-    console.log("User closed the flow");
-  }
-});
-```
-
-## Step 7: Retrieve connection data
-
-After a successful connection, fetch the user's data from your server.
-
-```ts
-const result = await odl.fetchConnectionResult(connectionId);
-// result.data contains the user's connected data
-```
-
-## Step 8: Retrieve sources and scopes dynamically
-
-You can fetch the current source catalog from the API instead of hard-coding it.
+Create `.env.local` in the project root.
 
 ```bash
-curl https://api.opendatalabs.com/api/v1/sources \
-  -H "Authorization: Bearer $OPENDATALABS_API_KEY"
+ODL_API_BASE_URL=https://api.opendatalabs.com/api/v1
+ODL_API_KEY=your_api_key
+ODL_APP_ID=odl_app_123
+APP_URL=http://localhost:3000
+NEXT_PUBLIC_VANA_CONNECT_OPENING_URL=https://app.vana.org/connect/opening
 ```
 
-## Current production sources
+## Step 3: Create the Connect controller
 
-Today, the available production sources are:
+Create `lib/odl.ts`.
 
-* Instagram
-* iCloud Notes
-* GitHub
-* Oura Ring
+```ts
+import { createConnectController } from "@opendatalabs/connect-js/server";
 
-## Next steps
+export const odl = createConnectController({
+  apiBaseUrl: process.env.ODL_API_BASE_URL!,
+  apiKey: process.env.ODL_API_KEY!,
+  appId: process.env.ODL_APP_ID!,
+  defaultOrigin: process.env.APP_URL!,
+  source: "instagram",
+  scopes: ["read:profile", "read:posts"],
+});
+```
 
-* Read [How It Works](/docs/how-it-works) for the product model
-* Read [Integrating the Connect Flow](/docs/integrating-connect-flow) for implementation details
-* Review the [API Reference Overview](/docs/api-reference-overview)
+This example requests Instagram profile and post data. Choose a source and its available scopes from the source catalog.
 
-<br />
+## Step 4: Create the server routes
 
-<br />
+Create these routes in your app.
 
-**Questions? Get in touch!** [hello@opendatalabs.com](mailto:hello@opendatalabs.com)
+```ts
+// app/api/connect/session/route.ts
+import { odl } from "@/lib/odl";
+
+export async function POST() {
+  return Response.json(
+    await odl.createConnectSession({
+      redirectUrl: process.env.APP_URL!,
+    })
+  );
+}
+```
+
+```ts
+// app/api/connect/status/route.ts
+import { odl } from "@/lib/odl";
+
+export async function GET(request: Request) {
+  const connectionId = new URL(request.url).searchParams.get("connectionId");
+  if (!connectionId) {
+    return Response.json({ error: "Missing connectionId" }, { status: 400 });
+  }
+  return Response.json(await odl.getStatus(connectionId));
+}
+```
+
+```ts
+// app/api/connect/data/route.ts
+import { odl } from "@/lib/odl";
+
+export async function GET(request: Request) {
+  const connectionId = new URL(request.url).searchParams.get("connectionId");
+  if (!connectionId) {
+    return Response.json({ error: "Missing connectionId" }, { status: 400 });
+  }
+  return Response.json(await odl.readAllWhenReady(connectionId));
+}
+```
+
+## Step 5: Add the Connect page
+
+Replace `app/page.tsx` with this client component.
+
+```tsx
+"use client";
+
+import { useState } from "react";
+import { useTwoTabConnect } from "@opendatalabs/connect-js/react";
+
+async function getJson(url: string, init?: RequestInit) {
+  const response = await fetch(url, init);
+  if (!response.ok) {
+    throw new Error(await response.text());
+  }
+  return response.json();
+}
+
+export default function Home() {
+  const [result, setResult] = useState<unknown>(null);
+  const [error, setError] = useState<string | null>(null);
+  const connect = useTwoTabConnect({
+    openingUrl: process.env.NEXT_PUBLIC_VANA_CONNECT_OPENING_URL,
+    createSession: () => getJson("/api/connect/session", { method: "POST" }),
+    getStatus: (connectionId) =>
+      getJson(`/api/connect/status?connectionId=${encodeURIComponent(connectionId)}`),
+    readResult: (connectionId) =>
+      getJson(`/api/connect/data?connectionId=${encodeURIComponent(connectionId)}`),
+  });
+
+  async function start() {
+    setError(null);
+    try {
+      setResult(await connect.start());
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Connect failed.");
+    }
+  }
+
+  return (
+    <main className="mx-auto flex min-h-screen max-w-xl flex-col justify-center gap-6 p-6">
+      <div className="space-y-2">
+        <p className="text-sm font-medium text-sky-700">Open Data Labs</p>
+        <h1 className="text-3xl font-semibold tracking-tight">
+          Connect Instagram
+        </h1>
+        <p className="text-slate-600">
+          Connect your data in Vana, then return here to see the result.
+        </p>
+      </div>
+      <button
+        className="w-fit rounded-md bg-sky-600 px-4 py-2 font-medium text-white shadow-sm transition hover:bg-sky-700 disabled:cursor-not-allowed disabled:opacity-60"
+        disabled={connect.state.type !== "idle"}
+        onClick={start}
+        type="button"
+      >
+        {connect.state.type === "idle" ? "Connect Instagram" : "Connecting..."}
+      </button>
+      {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      {result ? (
+        <pre className="max-h-96 overflow-auto rounded-lg bg-slate-950 p-4 text-sm text-slate-50">
+          {JSON.stringify(result, null, 2)}
+        </pre>
+      ) : null}
+    </main>
+  );
+}
+```
+
+## Step 6: Run the flow
+
+Start the app.
+
+```bash
+npm run dev
+```
+
+Open `http://localhost:3000` and select **Connect Instagram**. Vana opens in a second tab. Complete the request there. Return to the original tab.
+
+You are done when the original tab displays JSON for the approved scopes.
+
+Questions, feature requests, or support: hello@opendatalabs.com
